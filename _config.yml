@@ -1,2 +1,2 @@
 safe: true  # disable plugins; matches Github Pages
-exclude: [ README.md ]
+exclude: [ README.md run.bat ]
