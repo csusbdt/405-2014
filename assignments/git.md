@@ -1,7 +1,6 @@
 ---
 layout: assignment
-id: home
-title: Git 
+title: Git Assignment
 ---
 
 ## Overview

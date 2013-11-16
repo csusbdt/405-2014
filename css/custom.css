@@ -1,1 +1,8 @@
+body {
+  padding-top: 60px;
+}
+
+.navbar-brand {
+  color: #fff;   /* problem: this has no effect */
+}
  

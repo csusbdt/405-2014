@@ -1,76 +1,12 @@
 ---
 layout: default
-id: home
+id: index
 title: CSE 405 
 ---
 
-<script>
-var assignments = [
-  ['Jan 23', 'git', '']
-];
-</script>
+<h1>CSE 405 Server Programming</h1>
 
-<header>
-  <h1>CSE 405 Winter 2013</h1>
-</header>
-
-<main>
-
-  <table>
-    <caption>Schedule of Assignments</caption>
-    <thead>
-      <tr>
-        <th>Deadline</th>
-        <th>Assignment</th>
-        <th>Notes</th>
-      </tr>
-    </thead>
-    <tbody id="tbody">
-      <tr>
-        <td data-title="Deadline">Jan 23</td>
-        <td data-title="Assignment"><a href="assignments/git.html">git</a></td>
-        <td data-title="Notes">Ready. These should be long lines to show how it's done.</td>
-      </tr>
-      <tr>
-        <td data-title="Deadline">Jan 26</td>
-        <td data-title="Assignment"><a href="assignments/node.html">node</a></td>
-        <td data-title="Notes">Ready.</td>
-      </tr>
-    </tbody>
-  </table>
-
-</main>
-
-<footer>
-  This is the footer.
-</footer>
-
-<script>
-(function() {
-  if (window.onload) {
-    var originalOnload = window.onload;
-    window.onload = function() {
-      originalOnload();
-      app.init();
-    };
-  } else {
-    window.onload = function() {
-      app.init(); 
-    }
-  }
-})();
-
-var app = {};
-
-app.init = function() {
-  var tbody = document.getElementById('tbody');
-  for (var i = 0; i < assignments.length; ++i) {
-    var row = document.createElement('tr');
-    var deadline = document.createElement('td');
-    var id = document.createElement('td');
-    var notes = document.createElement('td');
-    
-  }
-};
-</script>
-
+<p class="lead">
+This is the course website for the CSUSB CSE 405
+Server Programming course in Winter quarter 2013.
+</p>
