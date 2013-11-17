@@ -12,7 +12,8 @@ The purpose of this assignment is to learn about Javascript in the context of No
 Javascript typically runs inside a browser.
 Inside this runtime environment, programs can access functionality defined as part of the Javascript language and additional functionality provided by the browser.
 For example, <code>Error</code> is a constructor function that is part of the Javascript language definition,
-but <code>XMLHttpRequest</code> is a constructor function that is not part of the language definition but provided by browsers.
+but <code>XMLHttpRequest</code> is a constructor function that is not part of the language definition
+but provided by browsers.
 
 Node.js is an execution environment for Javascript that is provided by a program that one runs from the command line.
 This execution environment supports the Javascript language definition but provides additional functionality that is different from that provided by browsers.

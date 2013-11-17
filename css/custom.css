@@ -7,6 +7,16 @@ body {
   color: #fff;   /* problem: this has no effect */
 }
 
+.csusbdt-navbar-brand {
+  color: #fff;   /* problem: this has no effect */
+}
+
+.csusbdt-callout {
+  margin: 20px 0;
+  padding: 20px;
+  border-left: 3px solid #eee;
+}
+
 .hero-unit {
   background-color: #eee;
   max-width: 38em;
