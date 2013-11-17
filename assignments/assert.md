@@ -175,9 +175,11 @@ Experiment with throwing instances of Error.
 Create file _exceptions.js_ to document your work.
 Structure _exceptions.js_ so that it does not display failure messages when run.
 
-<p class="text-info well">
+<blockquote>
+<p class="text-info">
 <code>Error</code> is a constructor function that is part of the Javascript language.
 </p>
+</bockquote>
 
 ## prototypes.js
 

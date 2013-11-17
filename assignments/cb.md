@@ -198,8 +198,8 @@ You also need test code that calls <code>divideby</code>.
         // Assert that type of err.message is a string.
     });
 
-<code>Error</code> is a constructor built into Javascript.
-To create an instance of Error, pass a string to it.
+The function <code>Error</code> is a constructor built into Javascript.
+To create an instance of <code>Error</code>, pass a string to it.
 
     new Error('Division by zero is undefined.');
 
