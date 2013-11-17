@@ -10,6 +10,7 @@ body {
 .hero-unit {
   background-color: #eee;
   max-width: 32em;
+  margin-top: 44px;
   position: relative;
   padding: 39px 19px 14px;
   *padding-top: 19px;
