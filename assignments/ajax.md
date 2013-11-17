@@ -24,6 +24,4 @@ You should start the assignment by making a copy of all the files from the [HTML
 
 Read up to and including Step 3 of [Ajax - Getting Started](https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started).  Test the example code presented in Step 3.  Do this by adding the code to your root app.html.  
 
-Instead of requesting _test.html_ (as in the example code), request a resource named _message_.  In the server code, return the string _hello ajax_ for requests for _/message_.  Create a module named _message_ to handle these requests.  The message module should resemble the root module provided in the [Buffers assignment](https://github.com/csusbdt/405-2014/wiki/Buffers) because we simply need to return a string of content-type _text/plain; charset=UTF-8_.
-
-
+Instead of requesting _test.html_ (as in the example code), request a resource named _message_.  In the server code, return the string _hello ajax_ for requests for _/message_.  Create a module named _message_ to handle these requests.  The message module should resemble the root module provided in the [Buffers assignment](buffers.html) because we simply need to return a string of content-type <code>text/plain; charset=UTF-8</code>.

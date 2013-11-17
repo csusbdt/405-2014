@@ -9,7 +9,7 @@ body {
 
 .hero-unit {
   background-color: #eee;
-  max-width: 32em;
+  max-width: 38em;
   margin-top: 44px;
   position: relative;
   padding: 39px 19px 14px;
@@ -23,3 +23,8 @@ body {
 .csusbdt-syllabus-grades {
   max-width: 12em;
 }
+
+.csusbdt-assert-table {
+  max-width: 32em;
+}
+
