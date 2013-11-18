@@ -1,0 +1,357 @@
+---
+layout: assignment
+title: Scope Assignment
+---
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment is to understand scoping in Javascript and Node.js modules.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+Create a directory named <em>scope</em> in your repository 
+to hold the work for this assignment. 
+When you complete this assignment, 
+the contents of this folder will be the following.
+</p>
+
+<ul>
+<li>README.md</li>
+<li>global.html</li>
+<li>global.js</li>
+<li>x.js</li>
+<li>test1.js</li>
+<li>main1.js</li>
+<li>test2.js</li>
+<li>main2.js</li>
+<li>test3.js</li>
+<li>main3.js</li>
+</ul>
+
+<h2>Global objects</h2>
+
+<p>
+Global references in Javascript are attributes of an object 
+called the <em>global namespace object</em>. 
+In browsers, the global namespace object is <code>window</code>; 
+in Node.js it's <code>global</code>. 
+To see this, create a file <em>global.html</em> 
+with the following contents and then load it in a browser.
+</p>
+
+<pre>
+&lt;script>
+  window.x = 3;
+  document.write(x); // 3
+&lt;/script>
+</pre>
+
+<p>
+Contrast this with the following Node.js script.
+Put the following in a file named <em>global.js</em> 
+and run it with command <em>node global.js</em>.
+</p>
+
+<pre>
+global.x = 3;
+console.log(x); // 3
+</pre>
+
+<p>
+In browsers, top-level declarations create references with global scope.
+Add the following to <em>global.html</em> 
+and examine in the browser; you may need to refresh/reload the Web page.
+</p>
+
+<pre>
+&lt;script>
+  var x = 3;
+  document.writeln(window.x);  // 3
+&lt;/script>
+</pre>
+
+<p>
+However, in Node.js, top-level declarations 
+do not create references in global scope. 
+To place a reference into global scope, 
+you need to explicitly make the reference a property of the global object. 
+Try the following in <em>global.js</em> to see this.
+</p>
+
+<pre>
+var x = 3;
+console.log(global.x);  // undefined
+global.x = x;
+console.log(x); // 3
+</pre>
+
+<h2>The process object</h2>
+
+<p>
+In Node.js, the <a href="http://nodejs.org/api/process.html#process_process">process object</a>
+has global scope.  
+</p>
+
+<pre>
+console.log(process !== undefined); // true
+</pre>
+
+<p>
+The process object is useful for accessing environmental variables.
+To see this, create file <em>x.js</em> with the following line.
+</p>
+
+<pre>
+console.log(process.env.x);
+</pre>
+
+<p>
+Run <em>x.js</em> to see that <code>x</code> is undefined.
+</p>
+
+<pre>
+node x
+</pre>
+
+<p>
+Now, add <code>x</code> to the environment.
+</p>
+
+<pre>
+export x=3
+</pre>
+
+<p>
+Run x.js again to see that <code>x</code> is now defined and equal to 3.
+</p>
+
+<p>
+You can remove <code>x</code> from the environment with the following.
+</p>
+
+<pre>
+unset x
+</pre>
+
+<p>
+This feature of Node.js is useful when you are developing code 
+that different developers run with different parameters such as
+database connection strings, passwords, URLs, etc.
+</p>
+
+<h2>Module scope</h2>
+
+<p>
+Rather than going into global scope, 
+top-level declarations in Node.js go into <em>module scope</em>, 
+which is a scope added to the language by Node.js. 
+It works similarly to <em>require.js</em> and other Javascsript libraries 
+that try to provide a module scope 
+that sits between function scope and global scope. 
+Read <a href="http://nodejs.org/api/modules.html">the Modules section of the Node.js documentation</a> 
+to get a better idea of how Node.js modules work.
+</p>
+
+<p>
+References to module instances are obtained 
+by a call to the globally scoped function <em>require</em>. 
+Objects in one module can be made accessible to other modules 
+by adding the references to the module's <em>exports</em> property. 
+To see how this works, 
+create files <em>test.js</em> and <em>main.js</em> 
+with the following contents, and then run main.js.
+</p>
+
+<pre>
+// test.js
+var x = 3;
+var y = 3;
+exports.x = x;
+</pre>
+
+<pre>
+// main.js
+var test = require('./test');
+console.log(test.x === 3);
+console.log(test.y === undefined);
+</pre>
+
+<p>
+Be careful with the above example.
+The line <code>exports.x = x;</code> adds an attribute named <code>x</code>
+to the object <code>exports</code> and copies the value 3 into it.
+The following example shows how this pattern can lead to unexpected results.
+</p>
+
+<pre>
+// test2.js
+var x = 3;
+exports.x = x;
+exports.getX = function() {
+  return x;
+};
+</pre>
+
+<pre>
+// main2.js
+var test = require('./test2');
+console.log(test.x === 3);
+test.x = 10;
+console.log(test.getX() === 3); // true
+</pre>
+
+<p>
+If we take x out of module scope,
+we get more intuitive code.
+</p>
+
+<pre>
+// test3.js
+exports.x = 3;
+exports.getX = function() {
+  return exports.x;
+};
+</pre>
+
+<pre>
+// main3.js
+var test = require('./test3');
+console.log(test.x === 3);
+test.x = 10;
+console.log(test.getX() === 10); // true
+</pre>
+
+<p>
+Although more intuitive, the example 3 code is still not well designed
+for any purpose I can think of other than illustrating module scope.
+If you're going to expose <code>x</code> to code outside the module,
+there's no reason to have a <code>getX</code> function.
+</p>
+
+<h2>Function scope</h2>
+
+<p>
+Unlike most popular languages, 
+Javascript <em>does not have block scope</em>, 
+which is scoping determined by braces. 
+Instead, it uses <em>function scope</em> and <em>hoisting</em>. 
+Read <a href="http://www.adequatelygood.com/JavaScript-Scoping-and-Hoisting.html">this
+article about scoping and hoisting</a>
+and then try to understand what is going on in the following.
+</p>
+
+<pre>
+&lt;script>
+var x = 1;
+var y = 2;
+
+console.log(x === 1);
+console.log(y === 2);
+
+function test() {
+  x = 10;
+  y = 20;
+  var y;
+}
+
+test();
+
+console.log(x === 10);
+console.log(y === 2);
+&lt;/script>
+</pre>
+
+<h2>Closure scope</h2>
+
+<p>
+Closure scope results from Javascript's support for closures.
+You can think of closures as private spaces that are shared
+by one or more functions.
+In the following code, function <code>getX</code> 
+forms a closure with variable <code>x</code>.
+</p>
+
+<pre>
+function getGetXFunction() {
+  var x = 3;
+  function getX() { return x; }
+  return getX;
+}
+
+console.log(typeof(x) === 'undefined');
+
+var getX = getGetXFunction();
+
+console.log(getX() === 3);
+</pre>
+
+<p>
+The code demonstrates that variable <code>x</code> is only visible to <code>getX</code>.
+The variable <code>x</code> has closure scope in this example.
+</p>
+
+<p>
+I wrote the above code to resemble code that you would see
+in other popular languages.
+To show you a style that is more common to Javascript programmers,
+study the following code that illustrates the same closure.
+</p>
+
+<pre>
+var getX = (function() {
+  var x = 3;
+  return function() { return x; }
+})();
+
+console.log(typeof(x) === 'undefined');
+
+console.log(getX() === 3);
+</pre>
+
+<p>
+In both of the above examples <code>x</code>
+is hidden from all code except the function <code>getX</code>.
+The following shows how multiple functions would have access to <code>x</code>.
+</p>
+
+<pre>
+var obj = (function() {
+  var x = 3;
+  return {
+    getX: function() { return x; },
+    setX: function(value) { x = value; },
+    getNegativeX: function() { return -x; }
+  };
+})();
+
+console.log(typeof(x) === 'undefined');
+
+console.log(obj.getX() === 3);
+console.log(obj.getNegativeX() === -3);
+obj.setX(4);
+console.log(obj.getX() === 4);
+</pre>
+
+<p>
+This last example shows how to construct what would be called a <em>singleton</em>
+in languages that use classes, such as Java, C#, PHP, Python, and C++. 
+A singleton is a class that is intended to be instantiated once in a program.
+</p>
+
+<p class="csusbdt-callout">
+In Javascript, you can control the visibility of data using closures.
+</p>
+
+<h2>Rewrite examples</h2>
+
+<p>
+Rewrite all the examples in this assignment
+to follow the pattern presented in 
+<a href="assert.html">the assert assignment</a>.
+Each example should run as a node program
+that only prints <em>All tests passed</em> when it runs.
+</p>
+
