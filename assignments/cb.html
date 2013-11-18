@@ -3,27 +3,34 @@ layout: assignment
 title: Callbacks Assignment
 ---
 
-## Overview
+<h2>Overview</h2>
 
+<p>
 At any given moment, a server program may be required to handle requests
 from several connecting clients simultaneously.
 Handling these requests typically requires access to
 resources through relatively slow file and socket input/output (I/O) streams.
-We say that server processes are _I/O bound_ 
+We say that server processes are <em>I/O bound</em> 
 because most of the time is spent waiting on I/O operations to complete.
+</p>
 
+<p>
 Typically the runtime environment provides I/O operations that block,
 which means that execution waits until the operation completes before processing continues.
-Blocking I/O is simpler to understand because the operation completes before control returns from the function.
+Blocking I/O is simpler to understand because the operation completes 
+before control returns from the function.
 The following is pseudo code that shows how to get a byte from a file input stream.
+</p>
 
 <pre>
 byte b = fileInputStream.readNextByte()
 // do something with b
 </pre>
 
+<p>
 Non-blocking I/O involves passing in a callback function to the operation.
 The following shows in psuedo code how to get a byte of data from a file input stream.
+</p>
 
 <pre>
 define function f(byte b) {
@@ -33,31 +40,44 @@ define function f(byte b) {
 fileInputStream.readNextByte(f)
 </pre>
 
+<p>
 Mainstream environments such as PHP, ASP.NET, and Java Servlets use blocking I/O.
 In these environments, request handlers run in separate threads to handle requests in parallel.
 If the threads need to access common data, then synchronization techniques are needed.
+</p>
 
+<p>
 Node.js provides a single-threaded environment with a non-blocking API.
 This means that thread synchonization is not needed but  
-callback functions need to be passed into API calls that are perform I/O or other long-running activities.
+callback functions need to be passed into API calls that 
+perform I/O or other long-running activities.
+</p>
 
+<p>
 The purpose of this assignment is to better understand how callbacks are used in Javascript.
+</p>
 
-## Assignment folder
+<h2>Assignment folder</h2>
 
-Create folder _~/405/callback_ for work related to this assignment.
+<p>
+Create folder <em>~/405/callback</em> for work related to this assignment.
 By the end of the assignment, this folder should contain the following files.
+</p>
 
-* README.md
-* parallel.js
-* sequential.js
-* error.js
+<ul>
+<li>README.md</li>
+<li>parallel.js</li>
+<li>sequential.js</li>
+<li>error.js</li>
+</ul>
 
 ## Instructions
 
+<p>
 The following function <code>f</code> typifies a Javascript function
 that starts a long-running activity with unknown duration and
 returns immediately before the activity completes.  
+</p>
 
 <pre>
 function f(cb) {
@@ -69,11 +89,16 @@ function f(cb) {
 }
 </pre>
 
+<p>
 The function <code>f</code> takes as its sole argument a reference to a callback function
 that is invoked when the long-running activity completes.
+</p>
 
-In this assignment, we assume that the program needs to invoke <code>f</code> 3 times and then display the word _done_. 
+<p>
+In this assignment, we assume that the program needs to invoke <code>f</code> 
+3 times and then display the word <em>done</em>. 
 The following program shows the wrong way to solve this problem.
+</p>
 
 <pre>
 f();
@@ -82,7 +107,9 @@ f();
 console.log('Done.');
 </pre>
 
+<p>
 The result of the above program is the following.
+</p>
 
 <pre>
 f's activity starts.
@@ -94,13 +121,18 @@ f's activity ends.
 f's activity ends.
 </pre>
 
+<p>
 For this assignment, you should invoke <code>f</code> 3 times in two different ways.
 In the first way, the 3 invocations run sequentially.  In the second way, they run in parallel.
+</p>
 
-Create a file named _sequential.js_ that contains the definition of <code>f</code> and code that invokes <code>f</code> 3 times
-so that they run in sequence and then print the word _done_ at the end.
+<p>
+Create a file named _sequential.js_ that contains the definition of <code>f</code> 
+and code that invokes <code>f</code> 3 times
+so that they run in sequence and then print the word <em>done</em> at the end.
 The result of the program is the following.
 Do not modify the function <code>f</code> to solve this problem.
+</p>
 
 <pre>
 f's activity starts.
@@ -112,7 +144,15 @@ f's activity ends.
 Done.
 </pre>
 
-Create another file named _parallel.js_ that contains the definition of <code>f</code> and code that invokes f 3 times so that they run in parallel and then print the word _done_ after all invocations complete.  The result of the program is the following.  Do not modify the function <code>f</code> to solve this problem.
+<p>
+Create another file named <em>parallel.js</em> 
+that contains the definition of <code>f</code> 
+and code that invokes <code>f</code> 3 times 
+so that each instance runs in parallel and 
+then print the word <em>done</em> after all invocations complete. 
+The result of the program is the following. 
+Do not modify the function <code>f</code> to solve this problem.
+</p>
 
 <pre>
 f's activity starts.
@@ -124,12 +164,20 @@ f's activity ends.
 Done.
 </pre>
 
+<p>
 Note that running the 3 invocations in parallel is faster than in sequence.
+</p>
 
-To solve these two problems you need to define one or more functions that you pass into <code>f</code>.
-Such a function will be called after f's activity completes. 
+<p>
+To solve these two problems you need to define one or more functions 
+that you pass into <code>f</code>.
+Such a function will be called after the activity managed by <code>f</code> completes. 
+</p>
 
-The following is an example of an experiment that you could try as a next step to solving this problem.
+<p>
+The following is an example of an experiment that you could try 
+as a next step to solving this problem.
+</p>
 
 <pre>
 function callback1() {
@@ -149,57 +197,90 @@ f(callback2);
 f(callback3);
 </pre>
 
-### Callbacks that take errors 
+<h2>Callbacks that take errors</h2>
 
+<p>
 The convention in nodejs is that if a function that takes a callback can generate and error,
 then the first argument of the callback holds the error.
 This first argument, typically named <code>err</code>,
-is either set to <code>null</code> (in the case of no error) or set to an instance of <code>Error</code> (in the case of an error).
-If the function needs to return data to calling code, then it passes this as the second argument in the callback function.
+is either set to <code>null</code> (in the case of no error) 
+or set to an instance of <code>Error</code> (in the case of an error).
+If the function needs to return data to calling code, 
+then it passes this as the second argument in the callback function.
 If there is no error, then the function calls the callback as follows.
+</p>
 
-    cb(null, data);
+<pre>
+cb(null, data);
+</pre>
 
+<p>
 If there is no data to return, then the function calls the callback as follows.
+</p>
 
-    cb(null);
+<pre>
+cb(null);
+</pre>
 
+<p>
 If there is an error, then the function calls the callback as follows.
+</p>
 
-    cb(err);
+<pre>
+cb(err);
+</pre>
 
-The first thing the calling code should do is check whether <code>err</code> is <code>null</code>.
+<p>
+The first thing the calling code should do is check 
+whether <code>err</code> is <code>null</code>.
+</p>
 
-    if (err) {
-        // Handle error.
-        return;
-    }
-    // Handle normal case.
+<pre>
+if (err) {
+    // Handle error.
+    return;
+}
+// Handle normal case.
+</pre>
 
-Add example code to _error.js_ that defines a function named <code>divideby</code>
+<p>
+Add example code to <em>error.js</em> 
+that defines a function named <code>divideby</code>
 that illustrates the conventions just described.
-The following is a description of the <code>divideby</code> function you should implement.
+The following is a description of the <code>divideby</code> function 
+that you should implement.
+</p>
 
-    function divideby(x, y, cb) {
-        // If y is zero, return an instance or Error in the first argument of cb.
-        // Otherwise, divide x by y and return the result in the second argument of cb,
-        // setting the first argument to null to indicate no error.
+<pre>
+function divideby(x, y, cb) {
+    // If y is zero, return an instance or Error in the first argument of cb.
+    // Otherwise, divide x by y and return the result in the second argument of cb
+    // and set the first argument to null to indicate no error.
+</pre>
 
+<p>
 You also need test code that calls <code>divideby</code>.
+</p>
 
-    divideby(6, 3, function(err, result) {
-        // Assert that err is null.
-        // Assert that result is 2.
-    });
+<pre>
+divideby(6, 3, function(err, result) {
+    // Assert that err is null.
+    // Assert that result is 2.
+});
 
-    divideby(6, 0, function(err, result) {
-        // Assert that err is not null.
-        // Assert that result is undefined.
-        // Assert that type of err.message is a string.
-    });
+divideby(6, 0, function(err, result) {
+    // Assert that err is not null.
+    // Assert that result is undefined.
+    // Assert that type of err.message is a string.
+});
+</pre>
 
+<p>
 The function <code>Error</code> is a constructor built into Javascript.
-To create an instance of <code>Error</code>, pass a string to it.
+To create an instance of <code>Error</code>, pass a string to it as follows.
+</p>
 
-    new Error('Division by zero is undefined.');
+<pre>
+new Error('Division by zero is undefined.');
+</pre>
 
