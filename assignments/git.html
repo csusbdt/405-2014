@@ -1,0 +1,123 @@
+---
+layout: assignment
+title: Git Assignment
+---
+
+<h2>Overview</h2>
+
+<p>
+In this course, you will submit your work by writing files into a
+remote Git repository that I set up for you.
+In order for me to set up this repository for you,
+I need a copy of the public key on your computer that your Git client
+program uses when connecting to remote hosts.
+</p>
+
+<p>
+After I receive this from you, I will create an empty
+remote repository for you to push commits into and then
+I will send you instructions on how to clone 
+this repository onto your local computer.
+</p>
+
+<p>
+In the top level of this cloned repository, 
+you will create a folder for each assignment that you complete.
+</p>
+
+<h2>SSH keys and tutorials</h2>
+
+<p>
+Follow <a href="https://github.com/csusbdt/centos/blob/master/GIT-SUBMISSION.md">these 
+Git submission instructions</a>
+to prepare your system for using Git in this course.
+</p>
+
+<p class="csusbdt-callout">
+Make sure that you do the reading and tutorials identified at the end of the instructions
+while you wait for me to create the remote repository for you.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+After you clone the remote repository,
+you will create a folder within it named <em>git</em> to store the results of your work on this assignment.
+When you are finished with this assignment, the git folder should contain the following files.
+</p>
+
+<ul>
+<li>README.md</li>
+<li>...files you created for experimentation...</li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+While you are waiting to receive the clone command from me,
+complete <a href="http://try.github.io/levels/1/challenges/1">the 
+TryGit tutorial</a>.
+</p>
+
+<p>
+After completing the TryGit tutorial, familiarize yourself with
+<a href="http://git-scm.com/doc">the documentation for Git</a>
+and <a href="http://git-scm.com/book">the Git book</a>.
+If you want to thoroughly understand Git, you should carefully read 
+<a href="http://git-scm.com/book/en/Git-Internals">Chapter 9 on Git Internals</a>.
+</p>
+
+<p>
+When you receive an email from me with the clone command,
+run the command in your home directory.
+This will create a folder named <em>405</em> in your home directory.
+From this point on, I will refer to this folder by the expression
+<em>~/405</em>.
+</p>
+
+<p class="csusbdt-callout">
+Tilda <em>~</em> represents a home directory on Unix-like
+operating systems such as Linux and OS X.
+</p>
+
+<p>
+In <em>~/405</em> you will see a file named README.md, 
+which contains some instructions
+to help you configure git on your system.
+</p>
+
+<p>
+The file's extension <em>.md</em> stands for <em>markdown</em>,
+which is a markup language that's designed to be readable in both raw and interpreted forms.
+You can think of it as a lightweight substitute for HTML that many programmers use.
+You should read about 
+<a href="http://daringfireball.net/projects/markdown/syntax">the Markdown syntax</a>],
+because each assignment folder that you create should contain a README.md file.
+</p>
+
+<p>
+For this assignment, create a folder named <em>git</em> within <em>~/405</em>.
+</p>
+
+<p>
+In <em>~/405/git</em> create a file README.md that describes the documentation you read
+and the experiments that you performed while completing this assignment.
+</p>
+
+<p>
+Also in <em>~/405/git/README.md</em> add a link to your Code School report card,
+which shows that you have completed the Try Git tutorial.
+<a href="http://www.codeschool.com/users/csusbdt">Here is my report card</a>.
+</p>
+
+<p>
+Use the following commands to push changes to your README.md file to your remote repository.
+</p>
+
+<pre>
+cd ~/405
+git add git/README.md
+git commit -m "completed git assignment"
+git push
+</pre>
+
