@@ -1,0 +1,133 @@
+---
+layout: assignment
+title: Buffers Assignment
+---
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment is to continue developing a Web application, 
+this time adding a content-type header to the response sent from the server to the browser. 
+We make use of 
+<a href="http://nodejs.org/api/all.html#all_buffer">Node.js buffers</a>
+to ensure that the character data is sent in the correct encoding.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+Create a directory named <code>buf</code> 
+in your repository to hold the work for this assignment. 
+When you complete this assignment, 
+the contents of this folder will be the following.
+</p>
+
+<ul>
+<li>main.js</li>
+<li>root.js<l/i>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+Create a file named <code>main.js</code> with the following contents.
+</p>
+
+<pre>
+var http = require('http');
+var domain = require('domain');
+var root = require('./root');
+
+function replyError(res) {
+  try {
+    res.writeHead(500);
+    res.end('Server error.');
+  } catch (err) {
+    console.error('Error sending response with code 500.');
+  }
+};
+
+function replyNotFound(res) {
+  res.writeHead(404);
+  res.end('not found');
+}
+
+function handleRequest(req, res) {
+  console.log('Handling request for ' + req.url);
+  if (req.url === '/') {
+    root.handle(req, res);
+  } else {
+    replyNotFound(res);
+  }
+}
+
+var server = http.createServer();
+
+server.on('request', function(req, res) {
+  var d = domain.create();
+  d.on('error', function(err) {
+    console.error(req.url, err.message);
+    replyError(res);
+  });
+  d.run(function() { handleRequest(req, res); });
+});
+
+server.listen(5000);
+</pre>
+
+<p>
+The main module given above incorporates the domain-based error handling 
+that we covered in a previous assignment.
+It adds a <code>replyNotFound</code> function, 
+which sends a response to the client when the client 
+requests a resource that the server does not recognize. 
+For this, we return a response code of 404.
+</p>
+
+<p>
+The main module also delegates the processing 
+of requests for <code>/</code> to module <code>root</code>.
+</p>
+
+<p>
+Create file <code>root.js</code> with the following contents.
+</p>
+
+<pre>
+var http = require('http');
+
+var body = new Buffer("I'm a codfish.", 'utf-8');
+
+exports.handle = function(req, res) {
+  res.writeHead(200, {
+    'Content-Type': 'text/plain; charset=UTF-8'
+  });
+  res.end(body);
+};
+</pre>
+
+<p>
+In root.js, we create a buffer object to store a string in the UTF-8 character encoding. 
+We add a header that indicates the content type is <code>text/plain</code> 
+and the character encoding is UTF-8. 
+We use the name <code>body</code> to store the string 
+because it is the contents of the HTTP message body to send to the browser.
+</p>
+
+<p>
+Test the server code and debug so that it runs correctly.
+</p>
+
+<p>
+Note the node uses chunked encoding by default to send HTTP message data. 
+To see this, use the Web developer tools available for your browser.  
+A good place to learn about how to use the developer tools built into Chrome is 
+<a href="http://discover-devtools.codeschool.com">the Dev-tools course on Code School</a>.
+</p>
+
+<p>
+The alternative to chunked encoding is to set a Content-Length header. 
+Incorporate this into your server code and test. 
+Do some research to learn about the HTTP Content-Length header.
+</p>
+
