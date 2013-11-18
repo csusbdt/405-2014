@@ -1,0 +1,213 @@
+---
+layout: assignment
+title: Events Assignment
+---
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment is to better understand 
+<a href="http://nodejs.org/api/all.html#all_events">events in Node.js</a>.
+</p>
+
+<p>
+Events in server-side Node.js are different than 
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/Event">events in client-side Web pages</a>,
+which you also need to learn about but is not covered in this assignment.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+Create a directory named <code>event</code> in your repository 
+to hold the work for this assignment. 
+When you complete this assignment, the contents of this folder will be the following.
+</p>
+
+<ul>
+<li>README.md</li>
+<li>main.js</li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+In Node.js, objects that emit events are 
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof">instances of</a>
+EventEmitter. 
+Node's HTTP server is an example of an event emitter.
+You can see this from the following code.
+</p>
+
+<pre>
+var http = require('http');
+var EventEmitter = require('events').EventEmitter;
+var server = http.createServer();
+console.log(server instanceof EventEmitter);
+</pre>
+
+<p>
+The above code doesn't do anything other than verify 
+that the created HTTP server object 
+inherits all the functions in the EventEmitter's prototype object. 
+The next bit of code shows 
+how to register an event listener function with the server.
+</p>
+
+<pre>
+function requestListener(req, res) {
+  console.log('Handling request for ' + req.url);
+  res.end('hello');
+}
+
+server.on('request', requestListener);
+</pre>
+
+<p>
+The first argument in the <code>on</code> function 
+in the above code is the name of an event 
+and the second argument is a reference 
+to a function that is called when the event occurs. 
+In our case, the event we listen for is called <code>request</code>. 
+The request event occurs when a browser makes a TCP connection 
+to the port the server is listening to 
+and sends an HTTP request message. 
+The request event listener function takes 2 arguments: 
+a request object and a response object. 
+The request object is used to read the HTTP message data sent by the browser
+and the request object is used to construct 
+and send an HTTP response message back to the browser.
+</p>
+
+<p>
+There is one more thing we need to do to get a running server: 
+tell the server to list to a port. 
+Add the following line to do this.
+</p>
+
+<pre>
+server.listen(5000);
+</pre>
+
+<p>
+Assemble the above code snippets into a complete server. 
+Run the server and go to 
+<a href="http://localhost:5000">http://localhost:5000</a> 
+with a browser to test.
+</p>
+
+<p>
+Your browser may send 2 requests, 
+one for / and the other for favicon.ico. 
+Later, we will return a <em>not found</em> 
+response to the browser for requests to the favicon file. 
+The favicon file is used by browsers as a graphical icon to represent the site,
+and it is probably important for a commercial website.
+</p>
+
+<h2>Anonymous functions</h2>
+
+<p>
+In Javascript, functions are objects and are commonly treated as such, 
+especially in the form of callback functions where they are passed in as arguments.
+</p>
+
+<p>
+When you read documentation and look at code samples, 
+you will also commonly see unnamed functions used directly in code where they are defined.
+Because they are defined without a name, they are called <em>anonymous functions</em>. 
+</p>
+
+<p class="csusbdt-callout">
+Anonymous functions are named by the functions that take them as arguments,
+but these names are local to the called function.
+</p>
+
+<p>
+In documentation and articles, you might see the server code presented above 
+written with an anonymous function as follows.
+</p>
+
+<pre>
+server.on('request', function (req, res) {
+  console.log('Handling request for ' + req.url);
+  res.end('hello');
+});
+</pre>
+
+<p>
+The definition of the function that was formerly named <code>requestListener</code> 
+is passed directly as an argument to the <code>on</code> function 
+without the need of assigning a name to it.
+</p>
+
+<h2>Error handling</h2>
+
+<p>
+The material for this section comes from 
+<a href="http://nodejs.org/api/all.html#all_domain">the Domain section of the Node.js documentation</a>. 
+According to this documentation, when Javascript throws an error, 
+the virtual machine may start to leak memory and result in other problems. 
+For this reason, we should avoid writing code 
+that relies on exceptions being thrown as part of its normal operation.
+</p>
+
+<p>
+The issue with a Node.js Web server is 
+that an uncaught exception will shut down the process, 
+which shuts off service to all clients as soon as a single uncaught exception occurs.
+To avoid loss of service, we should catch and report the exception 
+without shutting done the process. 
+The following code demonstrates a way to do this using 
+<a href="http://nodejs.org/api/all.html#all_domain">Domains</a>.
+</p>
+
+<pre>
+var http = require('http');
+var domain = require('domain');
+
+function replyError(res) {
+  try {
+    res.writeHead(500);
+    res.end('Server error.');
+  } catch (err) {
+    console.error('Error sending response with code 500.');
+  }
+};
+
+function handleRequest(req, res) {
+  console.log('Handling request for ' + req.url);
+  if (Math.random() > .5) throw new Error("I'm bad.");
+  res.end('hello');
+}
+
+var server = http.createServer();
+
+server.on('request', function(req, res) {
+  var d = domain.create();
+  d.on('error', function(err) {
+    console.error(req.url, err.message);
+    replyError(res);
+  });
+  d.run(function() { handleRequest(req, res); });
+});
+
+server.listen(5000);
+</pre>
+
+<p>
+Any errors thrown while handling a given request 
+will be caught by a domain object 
+specific to the request 
+in order to avoid halting the server.
+</p>
+
+<p>
+In the README.md file, explain what the following line of code does 
+in the example given above.
+</p>
+
+<pre>
+if (Math.random() > .5) throw new Error("I'm bad.");
+</pre>
+
