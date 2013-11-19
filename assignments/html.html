@@ -1,0 +1,97 @@
+---
+layout: assignment
+title: HTML Assignment
+---
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment is to learn how to read files into buffers 
+and deliver their contents to requesting clients.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+Create a directory named <code>html</code> 
+for the work you do for this assignment. 
+At the end of the assignment, 
+this folder will contain the following files.
+</p>
+
+<ul>
+<li>README.md</li>
+<li>app.html</li>
+<li>main.js</li>
+<li>root.js</li>
+<li>image.js</li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+Create a file named <em>app.html</em>. 
+Add HTML content to the file.
+</p>
+
+<p>
+Our strategy will be to read app.html into a buffer 
+when he server starts. 
+When browsers send a request for <code>/</code>, 
+we return the contents of the buffer.
+</p>
+
+<p>
+Copy main.js from <a href="https://github.com/csusbdt/405-2014/wiki/Buffers">the buffers assignment</a>. 
+</p>
+
+<p>
+Create file root.js with the following contents.
+</p>
+
+<pre>
+var http = require('http');
+
+var body;
+
+exports.handle = function(req, res) {
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=UTF-8',
+    'Content-Length': body.length
+  });
+  res.end(body);
+};
+
+exports.init = function(cb) {
+  require('fs').readFile('app.html', function(err, data) {
+    if (err) throw err;
+    body = data;
+    cb();
+  });
+}
+</pre>
+
+<p>
+Modify main.js so that it calls the exported init function 
+in the root module <em>before</em> the server starts listening to port 5000. 
+To accomplish this, you need to run the command 
+to listen to port 5000 inside the callback function that you pass into <code>init</code>.
+</p>
+
+<p>
+Run and test with browser.
+</p>
+
+<p>
+Add an <code>img</code> element to your web page 
+that loads an image from your server. 
+There are many ways to return the image from the server, 
+but for this assignment you should create a module 
+similar to root.js that does the job. 
+Call the module file <em>image.js</em>.
+</p>
+
+<p>
+Run and test with browser.
+</p>
+
