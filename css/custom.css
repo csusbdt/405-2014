@@ -11,6 +11,10 @@ body {
   color: #fff;   /* problem: this has no effect */
 }
 
+em {
+  color: #468847;
+}
+
 .csusbdt-code-title {
   color: #468847;
   padding: 10px;

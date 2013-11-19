@@ -6,7 +6,8 @@ title: Scope Assignment
 <h2>Overview</h2>
 
 <p>
-The purpose of this assignment is to understand scoping in Javascript and Node.js modules.
+The purpose of this assignment is to understand scoping in Javascript and Node.js.
+You will also learn how to access environmental variables in a Node.js program.
 </p>
 
 <h2>Assignment folder</h2>
@@ -20,15 +21,22 @@ the contents of this folder will be the following.
 
 <ul>
 <li>README.md</li>
-<li>global.html</li>
-<li>global.js</li>
-<li>x.js</li>
-<li>test1.js</li>
+<li>global-scope-1.html</li>
+<li>global-scope-1.js</li>
+<li>global-scope-2.html</li>
+<li>global-scope-2.js</li>
+<li>process.js</li>
+<li>run.sh or run.bat</li>
+<li>mod1.js</li>
 <li>main1.js</li>
-<li>test2.js</li>
+<li>mod2.js</li>
 <li>main2.js</li>
-<li>test3.js</li>
+<li>mod3.js</li>
 <li>main3.js</li>
+<li>function-scope.js</li>
+<li>closure-scope-1.js</li>
+<li>closure-scope-2.js</li>
+<li>closure-scope-3.js</li>
 </ul>
 
 <h2>Global objects</h2>
@@ -36,11 +44,13 @@ the contents of this folder will be the following.
 <p>
 Global references in Javascript are attributes of an object 
 called the <em>global namespace object</em>. 
-In browsers, the global namespace object is <code>window</code>; 
-in Node.js it's <code>global</code>. 
-To see this, create a file <em>global.html</em> 
+In browsers, a reference to global namespace object is <code>window</code>; 
+in Node.js it's <code>global</code>.
+To see this, create a file <em>global-scope-1.html</em> 
 with the following contents and then load it in a browser.
 </p>
+
+<div class="csusbdt-code-title">global-scope-1.html</div>
 
 <pre>
 &lt;script>
@@ -51,9 +61,11 @@ with the following contents and then load it in a browser.
 
 <p>
 Contrast this with the following Node.js script.
-Put the following in a file named <em>global.js</em> 
-and run it with command <em>node global.js</em>.
+Put the following in a file named <em>global-scope-1.js</em> 
+and run it with command <em>node global-scope-1.js</em>.
 </p>
+
+<div class="csusbdt-code-title">global-scope-1.js</div>
 
 <pre>
 global.x = 3;
@@ -62,9 +74,10 @@ console.log(x); // 3
 
 <p>
 In browsers, top-level declarations create references with global scope.
-Add the following to <em>global.html</em> 
-and examine in the browser; you may need to refresh/reload the Web page.
+Examine the following when loaded in a browser.
 </p>
+
+<div class="csusbdt-code-title">global-scope-2.html</div>
 
 <pre>
 &lt;script>
@@ -78,8 +91,10 @@ However, in Node.js, top-level declarations
 do not create references in global scope. 
 To place a reference into global scope, 
 you need to explicitly make the reference a property of the global object. 
-Try the following in <em>global.js</em> to see this.
+To see this, create and run the following.
 </p>
+
+<div class="csusbdt-code-title">global-scope-2.js</div>
 
 <pre>
 var x = 3;
@@ -91,9 +106,13 @@ console.log(x); // 3
 <h2>The process object</h2>
 
 <p>
-In Node.js, the <a href="http://nodejs.org/api/process.html#process_process">process object</a>
-has global scope.  
+In Node.js, the 
+<a href="http://nodejs.org/api/process.html#process_process">process object</a>
+has global scope. 
+Create and test the following to see this.
 </p>
+
+<div class="csusbdt-code-title">process.js</div>
 
 <pre>
 console.log(process !== undefined); // true
@@ -101,7 +120,8 @@ console.log(process !== undefined); // true
 
 <p>
 The process object is useful for accessing environmental variables.
-To see this, create file <em>x.js</em> with the following line.
+Add the following to process.js and run to see that 
+<code>x</code> is undefined.
 </p>
 
 <pre>
@@ -109,37 +129,67 @@ console.log(process.env.x);
 </pre>
 
 <p>
-Run <em>x.js</em> to see that <code>x</code> is undefined.
+Now run the code with the environmental variable <code>x</code> set to 3.
 </p>
 
 <pre>
-node x
+x="Hello there." node process
+</pre>
+
+<p class="callout">
+I'm not sure the above works on Windows.
+Please let me know and I will add that here.
+</p>
+
+<p class="callout">
+The ability to access environmental variables
+through <code>process.env</code> 
+is useful for running a system with different parameters,
+such as database connection strings, passwords, URLs, etc.
+This allows developers to run the system in testing,
+staging and production environments without modifying the source code.
+</p>
+
+<p>
+If you have many variables to set,
+you can use a shell script to run the program
+and set each variable on it's own line 
+using the system's line continuation character.
+As an example, suppose we wanted to run process-2.js 
+with values set for variables 
+<code>x</code>, <code>y</code>, <code>z</code>.
+Under OS X and Windows, create a file named <em>run.sh</em>
+with the following contents.
+</p>
+
+<div class="csusbdt-code-title">run.sh</div>
+
+<pre>
+x="Do you like my hat?"   \
+y="No I don't."           \
+z=42                      \
+node process
 </pre>
 
 <p>
-Now, add <code>x</code> to the environment.
+To run the script under OS X and Linux, 
+you need to make the shell script executable.
 </p>
 
 <pre>
-export x=3
+chmod +x run.sh
 </pre>
 
 <p>
-Run x.js again to see that <code>x</code> is now defined and equal to 3.
+Modify process.js to display
+<code>x</code>, <code>y</code>, and <code>z</code>.
+Use the run script to test.
 </p>
 
-<p>
-You can remove <code>x</code> from the environment with the following.
-</p>
-
-<pre>
-unset x
-</pre>
-
-<p>
-This feature of Node.js is useful when you are developing code 
-that different developers run with different parameters such as
-database connection strings, passwords, URLs, etc.
+<p class="csusbdt-callout">
+Under Windows, you need to name the file <em>run.bat</em>
+and use <code>%</code> for the line continuation character.
+<span class="text-warning">Let me know any other details I am missing for this.</span>
 </p>
 
 <h2>Module scope</h2>
@@ -148,7 +198,7 @@ database connection strings, passwords, URLs, etc.
 Rather than going into global scope, 
 top-level declarations in Node.js go into <em>module scope</em>, 
 which is a scope added to the language by Node.js. 
-It works similarly to <em>require.js</em> and other Javascsript libraries 
+It works similarly to RequireJS and other Javascsript libraries 
 that try to provide a module scope 
 that sits between function scope and global scope. 
 Read <a href="http://nodejs.org/api/modules.html">the Modules section of the Node.js documentation</a> 
@@ -157,26 +207,28 @@ to get a better idea of how Node.js modules work.
 
 <p>
 References to module instances are obtained 
-by a call to the globally scoped function <em>require</em>. 
+by a call to the globally scoped function <code>require</code>. 
 Objects in one module can be made accessible to other modules 
-by adding the references to the module's <em>exports</em> property. 
+by adding the references to the module's <code>exports</code> property. 
 To see how this works, 
-create files <em>test.js</em> and <em>main.js</em> 
-with the following contents, and then run main.js.
+create files <em>mod1.js</em> and <em>main1.js</em> 
+with the following contents, and then run main1.js.
 </p>
 
+<div class="csusbdt-code-title">mod1.js</div>
+
 <pre>
-// test.js
 var x = 3;
 var y = 3;
 exports.x = x;
 </pre>
 
+<div class="csusbdt-code-title">main1.js</div>
+
 <pre>
-// main.js
-var test = require('./test');
-console.log(test.x === 3);
-console.log(test.y === undefined);
+var mod1 = require('./mod1');
+console.log(mod1.x === 3);
+console.log(mod1.y === undefined);
 </pre>
 
 <p>
@@ -186,8 +238,9 @@ to the object <code>exports</code> and copies the value 3 into it.
 The following example shows how this pattern can lead to unexpected results.
 </p>
 
+<div class="csusbdt-code-title">mod2.js</div>
+
 <pre>
-// test2.js
 var x = 3;
 exports.x = x;
 exports.getX = function() {
@@ -195,12 +248,13 @@ exports.getX = function() {
 };
 </pre>
 
+<div class="csusbdt-code-title">main2.js</div>
+
 <pre>
-// main2.js
-var test = require('./test2');
-console.log(test.x === 3);
-test.x = 10;
-console.log(test.getX() === 3); // true
+var mod2 = require('./mod2');
+console.log(mod2.x === 3);
+mod2.x = 10;
+console.log(mod2.getX() === 3); // true
 </pre>
 
 <p>
@@ -208,24 +262,26 @@ If we take x out of module scope,
 we get more intuitive code.
 </p>
 
+<div class="csusbdt-code-title">mod3.js</div>
+
 <pre>
-// test3.js
 exports.x = 3;
 exports.getX = function() {
   return exports.x;
 };
 </pre>
 
+<div class="csusbdt-code-title">main3.js</div>
+
 <pre>
-// main3.js
-var test = require('./test3');
-console.log(test.x === 3);
-test.x = 10;
-console.log(test.getX() === 10); // true
+var mod3 = require('./mod3');
+console.log(mod3.x === 3);
+mod3.x = 10;
+console.log(mod3.getX() === 10); // true
 </pre>
 
 <p>
-Although more intuitive, the example 3 code is still not well designed
+Although more intuitive, the code is still not well designed
 for any purpose I can think of other than illustrating module scope.
 If you're going to expose <code>x</code> to code outside the module,
 there's no reason to have a <code>getX</code> function.
@@ -235,13 +291,15 @@ there's no reason to have a <code>getX</code> function.
 
 <p>
 Unlike most popular languages, 
-Javascript <em>does not have block scope</em>, 
+Javascript does not have block scope, 
 which is scoping determined by braces. 
-Instead, it uses <em>function scope</em> and <em>hoisting</em>. 
+Instead, it uses <em>function scope</em> and <em>hoisting</em>.
 Read <a href="http://www.adequatelygood.com/JavaScript-Scoping-and-Hoisting.html">this
 article about scoping and hoisting</a>
 and then try to understand what is going on in the following.
 </p>
+
+<div class="csusbdt-code-title">function-scope.js</div>
 
 <pre>
 &lt;script>
@@ -274,6 +332,8 @@ In the following code, function <code>getX</code>
 forms a closure with variable <code>x</code>.
 </p>
 
+<div class="csusbdt-code-title">closure-scope-1.js</div>
+
 <pre>
 function getGetXFunction() {
   var x = 3;
@@ -300,6 +360,8 @@ To show you a style that is more common to Javascript programmers,
 study the following code that illustrates the same closure.
 </p>
 
+<div class="csusbdt-code-title">closure-scope-2.js</div>
+
 <pre>
 var getX = (function() {
   var x = 3;
@@ -316,6 +378,8 @@ In both of the above examples <code>x</code>
 is hidden from all code except the function <code>getX</code>.
 The following shows how multiple functions would have access to <code>x</code>.
 </p>
+
+<div class="csusbdt-code-title">closure-scope-3.js</div>
 
 <pre>
 var obj = (function() {
@@ -348,10 +412,8 @@ In Javascript, you can control the visibility of data using closures.
 <h2>Rewrite examples</h2>
 
 <p>
-Rewrite all the examples in this assignment
+Rewrite all the Node.js examples in this assignment
 to follow the pattern presented in 
 <a href="assert.html">the assert assignment</a>.
-Each example should run as a node program
-that only prints <em>All tests passed</em> when it runs.
+The programs should simply print <em>All tests passed</em> when they run.
 </p>
-
