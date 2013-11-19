@@ -1,0 +1,270 @@
+---
+layout: assignment
+title: Caching Assignment
+---
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment 
+is to learn about HTTP caching mechanisms 
+and how to make use of them 
+in a single-page web application. 
+A good place to start is by reading 
+<a href="http://www.mnot.net/cache_docs/">Caching Tutorial</a>.
+</p>
+
+<p>
+Retrieving data from the Internet 
+is slow relative to retrieving 
+from the local file system.  
+Also, retrieving data over the Internet 
+will consume bandwidth, 
+which is a cost for the application provider and user. 
+Because many Web accessible resources, 
+such as HTML, images, video, etc., 
+don't change frequently, 
+it makes economic sense to retrieve 
+these resources once over the network, 
+store them in the local file system, 
+and then read them from the file system when needed subsequently. 
+This process is referred to as <em>caching</em>. 
+</p>
+
+<p>
+There are 2 places where caching of HTTP data can occur:
+</p>
+
+<ul>
+<li>on the local computer by the browser, and</li>
+<li>on a remote computer, called a cache server, that is controlled by your Internet service provider, application provider, or other intermediary interested in conserving bandwidth.</li>
+</ul>
+
+<p>
+The HTTP protocol includes headers 
+that can be used by client and server 
+to exchange information that is relevant to caching. 
+For instance, some resources should not be cached 
+because they are changing. 
+In this case, we would include headers 
+and maybe add a random string 
+to the request URL to ensure 
+that the resource is never delivered from cache storage.
+</p>
+
+<p>
+This assignment will illustrate the following 2 techniques.
+</p>
+
+<ul>
+<li>How to control caching through the use of ETags.</li>
+<li>How to avoid caching of changing data.</li>
+</ul>
+
+<p>
+This assignment is focused on controlling caching through ETags.
+It is also possible to control caching with expiration times,
+but this is not covered in this assignment.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+Create a directory named <em>cache</em> 
+for the work you do for this assignment. 
+At the end of the assignment, 
+this folder will contain the following files.
+</p>
+
+<ul>
+<li>README.md</li>
+<li>app.html</li>
+<li>main.js</li>
+<li>root.js</li>
+<li>image.js</li>
+<li>message.js</li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+You should start the assignment 
+by making a copy of all the files from 
+<a href="https://github.com/csusbdt/405-2014/wiki/Ajax">the Ajax assignment</a>. 
+This will be the starting point for this assignment.
+</p>
+
+<p>
+Verify that your server works correctly.
+</p>
+
+<h3>ETags</h3>
+
+<p>
+Servers can optionally return an ETag header for objects it returns to requesting clients.
+The ETag header contains a string that identifies the version of the object being returned.
+Try the following experiments to get a better understanding of how ETags work.
+</p>
+
+<p>
+View the HTTP response headers when requesting http://curl.haxx.se/.
+</p>
+
+<pre>
+curl -X GET http://curl.haxx.se/ -I
+</pre>
+
+<p>
+These are the headers that I got.
+</p>
+
+<pre>
+HTTP/1.1 200 OK
+Date: Sun, 01 Sep 2013 18:26:09 GMT
+Server: Apache
+Last-Modified: Sun, 01 Sep 2013 18:25:04 GMT
+ETag: "1a9eea-2d7b-4e55693100e05"
+Accept-Ranges: bytes
+Content-Length: 11643
+Vary: Accept-Encoding
+Content-Type: text/html
+</pre>
+
+<p>
+Notice the ETag header. 
+If a browser caches the content returned from a request with an ETag header,
+then it should also store the ETag value with it.
+The next time the user navigates to the page,
+the browser should send a request for the page with the following header.
+</p>
+
+<pre>
+If-None-Match: "1a9eea-2d7b-4e55693100e05"
+</pre>
+
+<p>
+If the document at the server has not been revised since the last request,
+then the ETag will not have changed.
+In this case the browser returns a <em>304 Not modified</em> response.
+In the following, replace the ETag that I provide with the actual ETag that you received.
+Also note that <code>-H</code> is used to specify a header for curl to use in its request.
+</p>
+
+<pre>
+curl -X GET http://curl.haxx.se/ -I -H "If-None-Match: \"1a9eea-2d7b-4e55603f21de2\""
+</pre>
+
+<p>
+The 304 response code informs the browser that the document
+in its cache is current.
+</p>
+
+<p>
+To see the result of sending a non-matching ETag, try to the following.
+</p>
+
+<pre>
+curl -X GET http://curl.haxx.se/ -I -H "If-None-Match: 1234"
+</pre>
+
+<p>
+Observe that the server returns a 200 response code,
+which means it has included the document in the body of the response.
+Also observe that the server includes an ETag header that identifies
+the current version of the document.
+</p>
+
+<p>
+The concept of an ETag is identical to the concept of a version identifier.
+</p>
+
+<h3>Node.js implementation</h3>
+
+<p>
+Use the following code to generate an ETag 
+based on the contents of app.html 
+that is read at server start up.
+</p>
+
+<pre>
+function generateETag(buffer) {
+  var shasum = require('crypto').createHash('sha1');
+  shasum.update(buffer, 'binary');
+  return shasum.digest('hex');
+}
+</pre>
+
+<p>
+Generating ETags from file contents 
+is convenient because the ETag 
+will take on a new value when the file changes. 
+For this to work in our case, 
+the server needs to be restarted when the file changes.
+</p>
+
+<p>
+Add code that adds the ETag header for requests for the root resource.
+</p>
+
+<p>
+Add code that checks the ETag sent by the browser for requests for the root resource.
+If the supplied ETag matches the ETag for app.html, then return a <em>304 Not modified</em> response.
+If the ETag does not match, then return the app.html as usual, including the new ETag value.
+</p>
+
+<p>
+The following code shows how to return a <em>304 Not modified</em> response. 
+The code sets the expiration date to a time that is a little under a year.
+</p>
+
+<pre>
+replyNotModified = function(res) {
+  res.writeHead(304, {
+    'Connection'       : 'keep-alive',
+    'Proxy-Connection' : 'keep-alive',
+    'Cache-Control'    : 'max-age=30000000',
+    'Expires'          : new Date(Date.now() + 30000000000).toUTCString()
+  });
+  res.end();
+};
+</pre>
+
+<p>
+Use a Web traffic inspection tool 
+to see if your browser checks the ETag 
+for requests it makes after retrieving the root resource. 
+Caching by browsers is optional so your browser may choose not
+to store the object and its ETag. 
+Safari in particular might not respect the ETag you send it.
+If this is the case with the browser you are using then
+try a different browser to test your code.
+</p>
+
+<p>
+Change the image data and restart the server. 
+Verify that the browser retrieves the new image data 
+after this change and subsequently relies on its cache.
+</p>
+
+<h3>Ajax</h3>
+
+<p>
+Some browsers cache responses to Ajax requests even when using the POST method.
+See <a href="http://stackoverflow.com/questions/12506897/is-safari-on-ios-6-caching-ajax-results">Is Safari on iOS 6 caching $.ajax results?</a>
+</p>
+
+<p>
+In this assignment we will assume that the message returned by the server should never be cached.
+Do the following 3 things to increase the likelihood the response is not cached.
+</p>
+
+<ul>
+<li>Add a random string to the URL parameters that the browser sends to the server.</li>
+<li>Add the following header to your response: <code>Pragma: no-cache</code></li>
+<li>Add the following header to your response: <code>Cache-Control: no-cache, no-store</code></li>
+</ul>
+
+<p>
+Use a Web traffic inspection tool to verify that the browser always retrieves the message.
+</p>
+
