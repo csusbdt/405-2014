@@ -11,6 +11,12 @@ body {
   color: #fff;   /* problem: this has no effect */
 }
 
+.csusbdt-code-title {
+  color: #468847;
+  padding: 10px;
+  font-size: 18px;
+}
+
 .csusbdt-callout {
   margin: 20px 0;
   padding: 20px;

@@ -3,50 +3,87 @@ layout: assignment
 title: Read Assignment
 ---
 
-## Overview
+<h2>Overview</h2>
 
-The purpose of this assignment is to learn how to read documents from a CouchDB database from inside a Nodejs program.  This assignment will give you experience accessing a REST-based API.
+<p>
+The purpose of this assignment is 
+to learn how to read documents from a CouchDB database 
+from inside a Nodejs program.  
+This assignment will give you experience accessing a REST-based API.
+</p>
 
-This assignment builds on the ajax and couch assignments.  In the ajax assignment, we created a Web page that uses ajax to request a message string from the server, which it displays to the user. In the ajax assignment, the message string was hard-coded into the program. In this assignment, we will get the retrieve the message string from the database.  
+<p>
+This assignment builds on the ajax and couch assignments.
+In the ajax assignment, 
+we created a Web page that uses ajax 
+to request a message string from the server, 
+which it displays to the user. 
+In the ajax assignment, the message string 
+was hard-coded into the program. 
+In this assignment, we will retrieve the message string from the database.  
+</p>
 
-## Assignment folder
+<h2>Assignment folder</h2>
 
-Create a directory named _couch_ for the work you do for this assignment. At the end of the assignment, this folder will contain the following files.
+<p>
+Create a directory named <em>couch</em> 
+for the work you do for this assignment. 
+At the end of the assignment, 
+this folder will contain the following files.
+</p>
 
-* README.md
-* createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)
-* security.json
-* design.json
-* message.js
-* root.js
-* db.js
-* main.js
+<ul>
+<li>README.md</li>
+<li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
+<li>security.json</li>
+<li>design.json</li>
+<li>message.js</li>
+<li>root.js</li>
+<li>db.js</li>
+<li>main.js</li>
+</ul>
 
-## Reading
+<h2>Reading</h2>
 
-* Read relevant parts of the CouchDB documentation.
-* Read the Nodejs documentation on HTTP client.
+<ul>
+<li>Read relevant parts of the CouchDB documentation.</li>
+<li>Read the Nodejs documentation on HTTP client.</li>
+</ul>
 
-## Instructions
+<h2>Instructions</h2>
 
-Copy your app server code from the ajax assignment to the read folder as a starting point.
-Test that the application is working correctly by visiting http://localhost:5000/ in a browser.
+<p>
+Copy your app server code from the ajax assignment 
+to the read folder as a starting point.
+Test that the application is working correctly by visiting 
+<a href="http://localhost:5000/">http://localhost:5000/</a> 
+in a browser.
+</p>
 
+<p>
 Start your CouchDB server.
+</p>
 
-Create file _createdb.sh_ that contains commands to create a database called _read_.
-The create script should insert a document with a property named _msg_.
-This property should be set to the string "the read assignment".
-Also, specify the value _message_ for the _\_id_ field so that we can identify
+<p>
+Create file <em>createdb.sh</em> 
+that contains commands to create a database called <em>read</em>.
+The create script should insert a document with a property named <em>msg</em>.
+This property should be set to the string <em>the read assignment</em>.
+Also, specify the value <em>message</em> for the <code>_id</code> 
+field so that we can identify
 this document in a straightforward way.
+</p>
 
-Modify the ajax message request handler to retrieve the message string from the database
+<p>
+Modify the ajax message request handler 
+to retrieve the message string from the database
 and return this to the client.
 The following code shows how this can be done.
+</p>
 
-_message.js_
+<div class="csusbdt-code-title">message.js</div>
 
-~~~~
+<pre>
 var http = require('http');
 var db = require('./db');
 
@@ -70,11 +107,11 @@ exports.handle = function(req, res) {
     res.end(body);
   });
 };
-~~~~
+</pre>
 
-_db.js_
+<div class="csusbdt-code-title">db.js</div>
 
-~~~~
+<pre>
 var assert      = require('assert');
 var querystring = require('querystring');
 var http        = require('http');
@@ -140,6 +177,4 @@ function send(options, cb) {
   // send request
   req.end();
 };
-~~~~
-
-
+</pre>
