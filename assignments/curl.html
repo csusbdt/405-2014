@@ -1,0 +1,100 @@
+---
+layout: assignment
+title: Curl Assignment
+---
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment is to learn how to use
+<a href="http://curl.haxx.se/">the curl command line tool</a> 
+to send and receive HTTP messages, 
+which is useful for system administration, debugging and research.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+Create a directory named <code>curl</code> for the work you do for this assignment.
+At the end of the assignment, this folder will contain the following files.
+</p>
+
+<ul>
+<li>README.md</li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+Install <a href="http://curl.haxx.se/">curl</a> 
+if you don't already have it.
+</p>
+
+<p class="csusbdt-callout">
+I believe curl is built into OS X but not Windows, but I haven't verified this.
+</p>
+
+<p>
+Read about curl and experiment.
+</p>
+
+<p>
+View <a href="http://curl.haxx.se/">http://curl.haxx.se/</a> 
+in a browser and then retrieve it using curl.
+</p>
+
+<pre>
+curl -X GET http://curl.haxx.se/
+</pre>
+
+<p>
+Curl writes the contents of the HTTP response into its standard output stream,
+which you can direct to a file.
+</p>
+
+<pre>
+curl -X GET http://curl.haxx.se/ > t.html
+</pre>
+
+<p>
+Now open t.html in your browser.  
+In Windows, the following will open t.html in your browser.
+</p>
+
+<pre>
+start t.html
+</pre>
+
+<p>
+In OS X, the following will open t.html in your browser.
+</p>
+
+<pre>
+open t.html
+</pre>
+
+<p>
+There's probably a way to do it in Linux, 
+but I don't know what it is,
+and it may vary based on distribution.
+</p>
+
+<p>
+To look at both headers and message body together, do the following.
+</p>
+
+<pre>
+curl -X GET http://curl.haxx.se/ -i
+</pre>
+
+<p>
+To look only at the response headers, do the following.
+</p>
+
+<pre>
+curl -X GET http://curl.haxx.se/ -I
+</pre>
+
+<p>
+In README.md, include the headers that are returned by the previous GET request.
+</p>
