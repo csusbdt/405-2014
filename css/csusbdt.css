@@ -1,0 +1,46 @@
+body {
+  padding-top: 60px;
+  padding-bottom: 30px;
+}
+
+em {
+  color: #468847;
+}
+
+@media (max-width: 767px) {
+  dt {
+    margin-top: 0.4em;
+  }
+}
+
+.navbar-brand {
+  color: #fff;   /* problem: this has no effect */
+}
+
+.csusbdt-navbar-brand {
+  color: #fff;   /* problem: this has no effect */
+}
+
+.csusbdt-under-menu {
+  margin-top: 36px;
+}
+
+.csusbdt-code-title {
+  color: #468847;
+  padding: 10px;
+  font-size: 18px;
+}
+
+.csusbdt-callout {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #c5e1c5;
+  border-left: 4px solid #9ecd9f;
+  color: #468847;
+  background: #ecf5ec;
+}
+
+.csusbdt-assert-table {
+  max-width: 32em;
+}
+
