@@ -54,7 +54,7 @@ When you are finished with this assignment, the git folder should contain the fo
 <h2>Instructions</h2>
 
 <p>
-While you are waiting to receive the clone command from me,
+While you are waiting to receive a git clone command from me,
 complete <a href="http://try.github.io/levels/1/challenges/1">the 
 TryGit tutorial</a>.
 </p>
@@ -68,9 +68,11 @@ If you want to thoroughly understand Git, you should carefully read
 </p>
 
 <p>
-When you receive an email from me with the clone command,
+When you receive an email from me with the git clone command,
 run the command in your home directory.
-This will create a folder named <em>405</em> in your home directory.
+This will create a folder named <em>405</em> in your home directory,
+so <span class="warning">make sure this folder 
+does not exist prior to running the clone command.</span>
 From this point on, I will refer to this folder by the expression
 <em>~/405</em>.
 </p>
@@ -78,6 +80,14 @@ From this point on, I will refer to this folder by the expression
 <p class="csusbdt-callout">
 Tilda <em>~</em> represents a home directory on Unix-like
 operating systems such as Linux and OS X.
+</p>
+
+<p class="csusbdt-callout">
+The git tutorials and git book talk about the <code>git init</code> command,
+and you may have experimented with it. 
+However, do not use <code>git init</code> to create the <em>~/405</em> folder.
+Instead, rely on the <code>git clone</code> command to create this folder for you.
+In our case, git clone is a simpler alternative to the git init command.
 </p>
 
 <p>
