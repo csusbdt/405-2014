@@ -7,14 +7,26 @@ em {
   color: #468847;
 }
 
+table {
+  background-color: #f5f5f5;
+}
+
+.list-group .list-group-item {
+  background-color: #f5f5f5;
+}
+
 @media (max-width: 767px) {
   dt {
     margin-top: 0.4em;
   }
 }
 
-.navbar-brand {
-  color: #fff;   /* problem: this has no effect */
+.csusbdt-box {
+  padding: 9px 14px;
+  margin-bottom: 14px;
+  background-color: #f5f5f5;
+  border: 1px solid #e1e1e1;
+  border-radius: 4px;
 }
 
 .csusbdt-navbar-brand {
