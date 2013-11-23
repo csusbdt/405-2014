@@ -22,33 +22,42 @@ Inside this runtime environment, programs can access functionality defined
 as part of the Javascript language 
 and additional functionality provided by the browser.
 For example, <code>Error</code> is a constructor function 
-that is part of the Javascript language definition
-but <code>XMLHttpRequest</code> is a constructor function 
-that is not a part of the language but provided by browsers.
+that is part of the Javascript language, 
+however <code>XMLHttpRequest</code> is a constructor function 
+that is not part of the language but provided by i
+the application programming interface (API) of browsers.
 </p>
 
 <p>
-Similar to browsers, Node.js is an execution environment for programs written in Javascript.
-However, Node.js offers an API that is different that the one offered by browsers; 
-it supports the Javascript language definition but provides additional functionality 
-that is different from that provided by browsers.
+Similar to browsers, Node.js is an execution environment 
+for programs written in Javascript.
+However, it offers an API that is different than the one offered by browsers.
+</p>
+
+<p class="csusbdt-callout">
+Node.js supports Javascript but provides an API 
+different from the one provided by browsers.
 </p>
 
 <p>
 The additional functionality of Node.js supports the construction 
 of command line programs in general and servers in particular.
-This additional functionality is accessed directly or indirectly 
-through <a href="http://nodejs.org/api/globals.html">the global object</a>.
-</p>
-
-<p class="csusbdt-callout">
-In browsers, a reference to the global object is obtained through the name <code>window</code>;
-but in Node.js, it is accessed through the name <code>global</code>.
+Some of this functionality is provided
+through names in global or module scope. 
+Read <a href="http://nodejs.org/api/globals.html">Globals</a>
+for more information.
 </p>
 
 <p>
-Node.js functionality is organized into <a href="http://nodejs.org/api/modules.html">modules</a>.
-Modules are just Javascript objects,
+In Javascript, objects in global scope are attributes of a global object.
+In browsers, a reference to the global object is obtained through the name <code>window</code>;
+in Node.js, it is accessed through the name <code>global</code>.
+</p>
+
+<p>
+Outside of global scope, much of the additional functionality provided by Node.js 
+can be accessed through predefined modules.
+<a href="http://nodejs.org/api/modules.html">Modules</a> are just Javascript objects,
 but you might want to think of them as static classes, singleton classes, 
 packages, or namespaces from other languages.
 </p>
@@ -69,7 +78,7 @@ When programs get big, you need to divide the code into separate modules.
 When one module needs to access the state or functionality of another module,
 you use a Node.js global function named <code>require</code> to obtain a reference to it.
 As an example, suppose your program is divided into 2 files <em>main.js</em> and <em>util.js</em>.
-Inside the main module you can get a reference to util module as follows.
+Inside the main module you can get a reference to the util module as follows.
 </p>
 
 <pre>
@@ -77,8 +86,8 @@ var util = require('./util');
 </pre>
 
 <p>
-This assignment makes use of the <code>ok</code> function in the Node.js assert module.
-To use the function, you need to <em>require</em> the assert module.
+This assignment makes use of the <code>ok</code> function in the Node.js <code>assert</code> module.
+To use the function, you need to <code>require</code> the assert module.
 If you pass a true value to <code>assert.ok</code> nothing happens;
 if you pass a false value, execution terminates with a failed assertion message.
 For example, the following program will terminate with a failed assertion message.
@@ -86,7 +95,7 @@ For example, the following program will terminate with a failed assertion messag
 
 <pre>
 var assert = require("assert").ok;
-assert(2 + 2 == 5);  // generates failed assertion message
+assert(2 + 2 === 5);  // generates failed assertion message
 </pre>
 
 <p>
@@ -95,10 +104,10 @@ The following program will terminate with no message.
 
 <pre>
 var assert = require("assert").ok;
-assert(2 + 2 == 4);  // no message
+assert(2 + 2 === 4);  // no message
 </pre>
 
-## Assignment folder
+<h2>Assignment folder</h2>
 
 <p>
 Create folder <em>~/405/assert</em> to hold the results of your work on this assignment. 
