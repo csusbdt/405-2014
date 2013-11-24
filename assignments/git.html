@@ -6,52 +6,44 @@ title: Git Assignment
 <h2>Overview</h2>
 
 <p>
-In this course, you will submit your work by writing files into a
-remote Git repository that I set up for you.
-In order for me to set up this repository for you,
-I need a copy of the public key on your computer that your Git client
-program uses when connecting to remote hosts.
+Git is a version control system that software developers use
+to manage source code.
+Although I can't prove it,
+I believe most developers use some version control system.
+For this reason, it is wise for students to start learning
+how to use one to get familiar with the basic operations.
 </p>
 
 <p>
+The Git version control system was originally developed
+to manage the Linux kernel.
+Since then, it has become widely used for many projects,
+both open and closed source.
+In this course, you will submit your work on assignments 
+by committing them into a
+remote Git repository that I set up for you.
+The purpose of this assignment is to get you started with this.
+</p>
+
+<p>
+In order for me to set up a remote Git repository for you,
+I need a copy of the public key on the computer that your Git client
+program uses when connecting to remote hosts.
 After I receive this from you, I will create an empty
 remote repository for you to push commits into and then
 I will send you instructions on how to clone 
 this repository onto your local computer.
-</p>
-
-<p>
 In the top level of this cloned repository, 
 you will create a folder for each assignment that you complete.
 </p>
 
-<h2>SSH keys and tutorials</h2>
+<h2>Instructions (step 1)</h2>
 
 <p>
 Follow <a href="https://github.com/csusbdt/centos/blob/master/GIT-SUBMISSION.md">these 
 Git submission instructions</a>
 to prepare your system for using Git in this course.
 </p>
-
-<p class="csusbdt-callout">
-Make sure that you do the reading and tutorials identified at the end of the instructions
-while you wait for me to create the remote repository for you.
-</p>
-
-<h2>Assignment folder</h2>
-
-<p>
-After you clone the remote repository,
-you will create a folder within it named <em>git</em> to store the results of your work on this assignment.
-When you are finished with this assignment, the git folder should contain the following files.
-</p>
-
-<ul>
-<li>README.md</li>
-<li>...files you created for experimentation...</li>
-</ul>
-
-<h2>Instructions</h2>
 
 <p>
 While you are waiting to receive a git clone command from me,
@@ -67,19 +59,31 @@ If you want to thoroughly understand Git, you should carefully read
 <a href="http://git-scm.com/book/en/Git-Internals">Chapter 9 on Git Internals</a>.
 </p>
 
+<h2>Instructions (step 2)</h2>
+
 <p>
-When you receive an email from me with the git clone command,
-run the command in your home directory.
-This will create a folder named <em>405</em> in your home directory,
-so <span class="warning">make sure this folder 
-does not exist prior to running the clone command.</span>
-From this point on, I will refer to this folder by the expression
-<em>~/405</em>.
+You need to wait for me to send you the clone command
+to create your repository
+before you begin step 2 of these instructions.
 </p>
 
-<p class="csusbdt-callout">
-Tilda <em>~</em> represents a home directory on Unix-like
-operating systems such as Linux and OS X.
+<p>
+After you receive the email,
+run the command I give you in your home directory.
+It will look something like the following.
+</p>
+
+<pre>
+cd ~
+git clone your_name@web1.ias.csusb.edu:405.git
+</pre>
+
+<p>
+This will create a folder named <em>405</em> in your home directory,
+so <span class="warning">make sure this folder 
+does not exist prior to running the command.</span>
+From this point on, I will refer to this folder by the expression
+<em>~/405</em>.
 </p>
 
 <p class="csusbdt-callout">
@@ -90,10 +94,16 @@ Instead, rely on the <code>git clone</code> command to create this folder for yo
 In our case, git clone is a simpler alternative to the git init command.
 </p>
 
+<p class="csusbdt-callout">
+Tilda <em>~</em> represents a home directory on Unix-like
+operating systems such as Linux and OS X.
+</p>
+
 <p>
 In <em>~/405</em> you will see a file named README.md, 
 which contains some instructions
 to help you configure git on your system.
+Read and follow these instructions.
 </p>
 
 <p>
@@ -131,3 +141,13 @@ git commit -m "completed git assignment"
 git push
 </pre>
 
+<h2>Assignment folder</h2>
+
+<p>
+When you are finished with this assignment, 
+<code>~/405/git</code> should contain the following file.
+</p>
+
+<ul>
+<li>README.md</li>
+</ul>

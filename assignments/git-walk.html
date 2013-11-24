@@ -1,0 +1,644 @@
+---
+layout: assignment
+title: Git Fundamentals
+---
+
+<h2>Overview</h2>
+
+<p>
+This page contains the steps 
+that I followed to create
+<a href="#">a video discussion of Git fundamentals</a>. 
+
+<h2>The folder layout of Git repositories</h2>
+
+<p>
+Create a new folder named <em>sam</em> 
+in your home directory for experimentation.  
+</p>
+
+<pre>
+cd ~
+mkdir sam
+cd sam
+</pre>
+
+<p>
+Create an empty git repository in <em>sam</em>.
+</p>
+
+<pre>
+git init 
+</pre>
+
+<p>
+This creates a folder named <em>.git</em> and populattes it
+with various files and folders.
+We will experiment with the essential files under <em>.git</em>.
+</p>
+
+<p>
+The following files and dirs are inside the .git folder.
+</p>
+
+<div class="csusbdt-code-title">Important stuff</div>
+
+<dl class="dl-horizontal csusbdt-box">
+  <dt>config</dt>    <dd>configuration (remote urls, ...)</dd>
+  <dt>HEAD</dt>      <dd>points to the currently checked out branch</dd>
+  <dt>index</dt>     <dd>staging file</dd>
+  <dt>objects/</dt>  <dd>raw data</dd>
+  <dt>refs/</dt>     <dd>pointers into commit objects (stored under objects/)</dd>
+</dl>
+
+<div class="csusbdt-code-title">Unimportant stuff</div>
+
+<dl class="dl-horizontal csusbdt-box">
+  <dt>branches/</dt>    <dd>not used by newer versions of git</dd>
+  <dt>description</dt>  <dd>used by something called WebGit</dd>
+  <dt>hooks/</dt>       <dd>optional scripts that could be run at different times</dd>
+  <dt>info/</dt>        <dd>contains a global excludes file</dd>
+</dl>
+
+<p>
+View the contents of <em>.git/config</em>.  
+It contains the following line.
+</p>
+
+<pre>
+bare = false
+</pre>
+
+<p>
+This means the repository is inside a folder that
+will be used by a developer working locally.
+If bare were set to true, it would indicate that the repository
+resides on its own and is used as a remote repository only.
+
+<h2>Blob Objects</h2>
+
+<p>
+The SHA-1 hash function produces a 20-byte string
+from a sequence of bytes.
+It is considered cryptographically secure because
+given a hash of a block of bytes,
+it would take an unreasonable amount of time to determine
+the block of bytes that produced the value.
+People sometimes use the term <em>irreversible</em>
+to describe this property.
+</p>
+
+<p>
+Git stores various types of objects in its datastore.
+When Git stores a file,
+the object type is considered a <em>blob</em>.
+The name of a blob object is computed
+as the SHA-1 hash of the ASCII string <code>"blob "</code>, 
+followed by an ASCII string representation of the filesize,
+followed by a zero byte,
+followed by the file contents.
+The result is a 20-byte name that can be used to locate
+the object in the datastore.
+Because the name of blob objects in the datastore are computed from the
+data they contain, Git is referred to as a 
+<em>content-addressable file system</em>.
+</p>
+
+<p>
+Git stores unpacked blob objects (representing files) under <em>.git/objects</em>.
+If you look there now, you will see two empty folders 
+<em>into</em> and <em>pack</em>.
+I don't know what these are used for.
+Other than these 2 subfolders, the objects folder is empty.
+We will now experiment with creating a blob object from a file
+and adding it to the datastore.
+</p>
+
+<p>
+In the <em>sam</em> folder, create a file named <em>hello.txt</em> 
+with the text <em>hello</em> stored in it.
+</p>
+
+<p>
+Use the <code>git hash-object</code> command as follows
+to compute the git hash name for the contents of <em>hello.txt</em>.
+</p>
+
+<pre>
+git hash-object hello.txt
+</pre>
+
+<p>
+This command displays the following 20-byte hash 
+computed from the object meta data followed by the file contents.
+</p>
+
+<pre>
+ce013625030ba8dba906f756967f9e9ca394464a
+</pre>
+
+<p class="csusbdt-callout">
+The <code>git hash-object</code> command computes the SHA-1 hash of
+the string <code>"blob "</code>, followed by number of bytes, followed by a zero,
+followed by the file contents; it does not include other file metadata such as
+filename, file permissions, creation date, last modified date, etc.
+</p>
+
+<p>
+Use the <code>-w</code> option
+to write the blob object into the datastore.
+</p>
+
+<pre>
+git hash-object -w hello.txt
+</pre>
+
+<p>
+Git stores the blob object as a file under the following folder.
+</p>
+
+<pre>
+.git/objects/ce
+</pre>
+
+<p>
+Notice that the first 2 characters of the hash 
+are taken for the folder name
+and the remaining 18 characters of the hash
+are used for the filename.
+</p>
+
+<p>
+Use the <code>git cat-file</code> command 
+with the <code>-t</code> option to determine
+the type of object stored under a given hash.
+</p>
+
+<pre>
+git cat-file -t ce013625030ba8dba906f756967f9e9ca394464a
+</pre>
+
+<p>
+The type reported is <em>blob</em> as expected.
+</p>
+
+<p>
+Use the <code>git cat-file</code> command 
+with the <code>-p</code> option to inspect 
+the contents of the object stored under a given hash.
+</p>
+
+<pre>
+git cat-file -p ce013625030ba8dba906f756967f9e9ca394464a
+</pre>
+
+<p>
+Git objects contain a header followed by a zlib-compressed version of the data.
+The header contains an object type indicator (<em>blob</em> for files) 
+and the byte length of the uncompressed data.
+</p>
+
+<h2>Tree Objects</h2>
+
+<p>
+Git stores folders as tree objects.
+For the purpose of illustration, 
+create file <em>bye.txt</em> with contents <em>bye</em>.
+</p>
+
+<p>
+Store <em>bye.txt</em> in Git's object store.
+</p>
+
+<pre>
+git hash-object -w bye.txt
+</pre>
+
+<p>
+Git displays its SHA-1 hash for the file.
+</p>
+
+<pre>
+b023018cabc396e7692c70bbf5784a93d3f738ab
+</pre>
+
+<p>
+Git produces tree objects from a file named </em>index</e>.
+Check under <em>.git</em> that the index file doesn't yet exist.
+</p>
+
+<p>
+As a first step, use the <code>git update-index</code> command 
+to create index and add <em>hello.txt</em> to it.
+</p>
+
+<pre>
+git update-index --add hello.txt
+</pre>
+
+<p>
+Verify that <em>.git/index</em> now exists.
+</p>
+
+<p>
+Add <em>bye.txt</em> to the index.
+</p>
+
+<pre>
+git update-index --add bye.txt
+</pre>
+
+<p>
+Use <code>git write-tree</code> 
+to write the index into the object store as a tree object.
+</p>
+
+<pre>
+git write-tree
+</pre>
+
+<p>
+The <code>write_tree</code> command 
+displays the following SHA-1 hash 
+that identifies the tree object in the object store.
+</p>
+
+<pre>
+02671cb81375cd06bc56f0c4f94064afe5324bbc
+</pre>
+
+<p>
+Verify that the newly created object is a tree object.
+</p>
+
+<pre>
+git cat-file -t 02671cb81375cd06bc56f0c4f94064afe5324bbc
+</pre>
+
+<p>
+Look at the contents of the tree object.
+</p>
+
+<pre>
+git cat-file -p 02671cb81375cd06bc56f0c4f94064afe5324bbc
+</pre>
+
+<p>
+This command displays the following.
+</p>
+
+<pre>
+100644 blob b023018cabc396e7692c70bbf5784a93d3f738ab    bye.txt
+100644 blob ce013625030ba8dba906f756967f9e9ca394464a    hello.txt
+</pre>
+
+<p>
+From this, you can see that git tree objects contain a list of objects,
+which include each object's permissions, type, hash and filename.
+</p>
+
+<p>
+Let's see what a folder looks like when placed in the repository.
+Because you can only add files into the index, we need
+to have a file in the folder that we want to test.
+</p>
+
+<p>
+Create a folder called <em>test</em> 
+and copy <em>bye.txt</em> into it.
+</p>
+
+<p>
+Add <em>test/bye.txt</em> into the index.
+</p>
+
+<pre>
+git update-index --add test/bye.txt
+</pre>
+
+<p>
+Write the index into the object store.
+</p>
+
+<pre>
+git write-tree
+</pre>
+
+<p>
+This displays the following hash for the new tree object.
+</p>
+
+<pre>
+e2265495a2b7c2572d86a2dc7abf64280f05cd08
+</pre>
+
+<p>
+Verify the new tree object is in the data store.
+</p>
+
+<pre>
+ls .git/objects
+</pre>
+
+<p>
+Verify the type of the new tree object.
+</p>
+
+<pre>
+git cat-file -t e2265495a2b7c2572d86a2dc7abf64280f05cd08
+</pre>
+
+<p>
+Verify the contents of the new tree object.
+</p>
+
+<pre>
+git cat-file -p e2265495a2b7c2572d86a2dc7abf64280f05cd08
+</pre>
+
+<p>
+This produces the following output.
+</p>
+
+<pre>
+100644 blob b023018cabc396e7692c70bbf5784a93d3f738ab    bye.txt
+100644 blob ce013625030ba8dba906f756967f9e9ca394464a    hello.txt
+040000 tree b72ea0f9eb903bf5f9eebd9150a001878fd9d337    test
+</pre>
+
+<p>
+Notice that the test folder is represented as a tree object with
+a hash value that we have not seen yet. Examine the contents
+of the test tree object.
+</p>
+
+<pre>
+git cat-file -p b72ea0f9eb903bf5f9eebd9150a001878fd9d337
+</pre>
+
+<p>
+This produces the following output.
+</p>
+
+<pre>
+100644 blob b023018cabc396e7692c70bbf5784a93d3f738ab    bye.txt
+</pre>
+
+<p>
+This is a very intresting result!
+The <em>bye.txt</em> file in the <em>test</em> folder has the same
+hash as the <em>bye.txt</em> file in the root folder.  
+Because these files are identical, 
+the two tree objects that reference them point to the
+same blob object.
+</p>
+
+<p>
+Change the contents of <em>hello.txt</em> to something else.
+</p>
+
+<p>
+Use the <code>cat-file</code> command as follows
+to restore the previous contents of <em>hello.txt</em>.
+</p>
+
+<pre>
+git cat-file -p ce013625030ba8dba906f756967f9e9ca394464a > hello.txt
+</pre>
+
+## Commit Objects
+
+Next, we will look at a new object type: the commit object.
+A commit object represents a snapshot of the state of the working tree.
+The commit object contains the hash value of the tree object that was
+created out of the index, a comment, timestamp, and identification
+of the committer.
+
+Create a commit object for the first top-level tree object created.
+
+    echo "first commit" | git commit-tree 02671cb81375cd06bc56f0c4f94064afe5324bbc
+
+This produces the following hash.
+
+    7f62b53548a8d6df5d49238c1023fdf6650c9fb0
+
+Check that the hash refers to a commit object.
+
+    git cat-file -t 7f62b53548a8d6df5d49238c1023fdf6650c9fb0
+
+Look at the contents of the commit object.
+
+    git cat-file -p 7f62b53548a8d6df5d49238c1023fdf6650c9fb0
+
+The commit object just created has no parent because it starts a branch.
+Create a commit object for the second top-level tree object in the
+object store and specify the first commit object as the parent.
+
+    echo "second commit" | git commit-tree e226 -p 7f62
+
+Notice that we are now abreviating the hash values to 4 characters.
+Use as many characters as necessary to distinguish hash values but
+also use at least 4 characters.
+
+The hash value of the second commit is the following.
+
+    f52a559d24982751d9427b9fcafe83c8c8342d93
+
+Examine the commit log.
+
+    git log --stat f52a
+
+## Refs and Branches
+
+To make it easier to work with commits, git provides a naming mechanism.
+Named git hash values are referred to as _refs_ and are stored under _.git/refs_.
+
+A branch is a directed graph of commits that culminate at a single commit object
+referred to as its head.  A branch is not neccessarily a simple sequence of commits
+because merge operations may result in commit objects with multiple parents.
+
+Git stores refs to branch heads under _.git/refs/heads_.
+The ref name is the name of the branch.
+
+Create a ref that points to the last commit and make it the head of
+a branch called _master_.
+
+    git update-ref refs/heads/master f52a559d24982751d9427b9fcafe83c8c8342d93
+
+Now you can use the string _master_ instead of the hash value. 
+The following shows that this works in the _git cat-file_ command.
+
+    git cat-file -p master
+
+Directly under _.git_ is a file called _HEAD_.  It contains a ref for the
+branch that is currently checked out.
+
+    cat .git/HEAD
+
+The above command displays the following.
+
+    ref: refs/heads/master
+
+Let's create a branch called _test_ whose head is the first commit of the master branch.
+
+    echo "7f62b53548a8d6df5d49238c1023fdf6650c9fb0" > .git/refs/heads/test
+
+Display a list of branches.
+
+    git branch
+
+This displays the following.
+
+* master
+  test
+
+The asterisk shows the current branch.
+Verify this as follows.
+
+    cat .git/HEAD
+
+The current branch is the branch operated on when staging and committing.
+
+Use the _git checkout_ command to replace the working tree with a specified tree object.
+Do the following to set the contents of _sam_ to the head of the test branch.
+
+    git checkout test
+
+Notice that the test folder is gone.
+
+Check that _test_ is the current branch.
+
+    git branch
+    cat .git/HEAD
+
+Let's manually delete the test branch and recreate it using the _git branch_ command.
+
+Checkout the master branch.
+
+    git checkout master
+
+Manually delete the test branch.
+
+    rm .git/refs/heads/test
+
+Verify that master is the only branch.
+
+    git branch
+
+Checkout the first commit.
+
+    git checkout 7f62
+
+Git tells us we are in _detatched head_ mode.  This means the HEAD ref
+points to a commit but not to a branch head.  Verify this as follows.
+
+    cat .git/HEAD
+
+This fact can also be verified with the _git branch_ command.
+
+    git branch
+
+Do the following to create a new branch called _test_ with head pointer
+equal to the current HEAD.
+
+    git branch test
+
+See that the new branch exists.
+
+    git branch
+
+However, we are still in detatched head mode.  To make _test_ the current branch,
+run the _git checkout_ command.
+
+    git checkout test
+
+Finally, we will repeat the process of creating a test branch but do it using the
+_git checkout_ command.
+
+Delete the test branch.
+
+    git checkout master
+    git branch -d test
+
+Verify.
+
+    git branch
+
+Recreate the test branch.
+
+    git checkout -b test 7f62
+
+Verify that _test_ is a new branch and is current.
+
+    git branch
+
+## The Tag Object
+
+A fourth type of git object is called a _tag_.  A tag is a pointer to
+a commit with timestamp, message and identification of the creator.
+
+Verify that there are no tags.
+
+    ls .git/refs/tags
+
+The following creates a tag called _v1_ that points to the head of the master branch.
+
+    git checkout master
+    git tag v1
+
+Verify that the tag was created.
+
+    ls .git/refs/tags
+    cat .git/refs/tags
+
+Verify that the tag points to the same commit object as the head
+of the master branch.
+
+    cat .git/refs/heads/master
+
+The tag _v1_ is an example of a lightweight tag, which is a reference
+to a commit.  An annotated tag, on the other hand, is a reference to a tag object.
+This allows the tag to be associated with a comment, tagger and timestamp.
+The following is an example of an annotated tag.
+
+    git tag -a av1 master -m "version 1"
+
+Check that a tag object got created.
+
+    cat .git/refs/tags/av1
+
+This displays the following.
+
+    4714bb773733f8052bfcaf45224720d4f179a518
+
+Check the type of object the hash names.
+
+    git cat-file -t 4714
+
+Tags don't need to point to commit objects; they can point to any type of git object.
+
+## Remote References
+
+In addition to branch heads and tags, a third type of reference is a remote reference.
+A remote ref is a hash for a commit in a remote repository.
+
+For example, suppose you push the master branch to a remote called _origin_. 
+In this case, git sets the following to the hash of the local master branch head.
+
+    .git/refs/remotes/origin
+
+Remote refs can not be checked out like local refs; they can only be merged into 
+local branches. (Is this correct?)
+
+TODO: experiments on remote refs
+
+## Packing
+
+When you run _git gc_ or when this is run as a side effect of pushing to a remote,
+git will try to pack the objects in such a way that similar section of data are extracted
+and pointed to by multiple containing objects.  The result is that files under
+_.git/objects_ get removed and added in anoher form under _.git/objects/pack_.
+
+Resume reading and note taking from [here](http://git-scm.com/book/en/Git-Internals-The-Refspec).
+
+
