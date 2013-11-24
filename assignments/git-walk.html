@@ -9,8 +9,26 @@ title: Git Fundamentals
 This page contains the steps 
 that I followed to create
 <a href="#">a video discussion of Git fundamentals</a>. 
+</p>
 
-<h2>The folder layout of Git repositories</h2>
+<p class="csusbdt-callout">
+I am not an expert on Git.
+This document and video is for beginners like me to
+get started with the process of learning Git.
+</p>
+
+<p>
+This presentation is based on my reading of 
+<a href="http://git-scm.com/book/en/Git-Internals">Chapter 9: Git Internals</a>.
+</p>
+
+<p class="csusbdt-callout">
+If you are working in Windows, 
+the commands given in this tutorial should be performed
+in the Git-bash shell.
+</p>
+
+<h2>Git Folder Layout</h2>
 
 <p>
 Create a new folder named <em>sam</em> 
@@ -32,7 +50,7 @@ git init
 </pre>
 
 <p>
-This creates a folder named <em>.git</em> and populattes it
+This creates a folder named <em>.git</em> and populates it
 with various files and folders.
 We will experiment with the essential files under <em>.git</em>.
 </p>
@@ -48,7 +66,7 @@ The following files and dirs are inside the .git folder.
   <dt>HEAD</dt>      <dd>points to the currently checked out branch</dd>
   <dt>index</dt>     <dd>staging file</dd>
   <dt>objects/</dt>  <dd>raw data</dd>
-  <dt>refs/</dt>     <dd>pointers into commit objects (stored under objects/)</dd>
+  <dt>refs/</dt>     <dd>human-readable names of objects</dd>
 </dl>
 
 <div class="csusbdt-code-title">Unimportant stuff</div>
@@ -57,7 +75,7 @@ The following files and dirs are inside the .git folder.
   <dt>branches/</dt>    <dd>not used by newer versions of git</dd>
   <dt>description</dt>  <dd>used by something called WebGit</dd>
   <dt>hooks/</dt>       <dd>optional scripts that could be run at different times</dd>
-  <dt>info/</dt>        <dd>contains a global excludes file</dd>
+  <dt>info/</dt>        <dd>contains a local excludes file</dd>
 </dl>
 
 <p>
@@ -74,18 +92,22 @@ This means the repository is inside a folder that
 will be used by a developer working locally.
 If bare were set to true, it would indicate that the repository
 resides on its own and is used as a remote repository only.
+</p>
 
 <h2>Blob objects</h2>
 
 <p>
-The SHA-1 hash function produces a 20-byte string
-from a sequence of bytes.
-It is considered cryptographically secure because
-given a hash of a block of bytes,
+The SHA-1 hash function maps a block of bytes 
+to a 20-byte value called the <em>hash value</em>.
+The mapping is considered cryptographically secure because
 it would take an unreasonable amount of time to determine
-the block of bytes that produced the value.
-People sometimes use the term <em>irreversible</em>
-to describe this property.
+the block of bytes that produced a given hash value.
+But this isn't the property that Git relies on.
+For Git to work correctly,
+there should be no collisions,
+which means there should never be 2 different objects that map to the same hash value.
+There is no publicly known SHA-1 collision even through researchers have tried to produce one.
+Thus, I believe the possibility of a collision is so small that the issue can be ignored.
 </p>
 
 <p>
@@ -97,26 +119,25 @@ as the SHA-1 hash of the ASCII string <code>"blob "</code>,
 followed by an ASCII string representation of the filesize,
 followed by a zero byte,
 followed by the file contents.
-The result is a 20-byte name that can be used to locate
+The result is a 20-byte number that can be used to locate
 the object in the datastore.
-Because the name of blob objects in the datastore are computed from the
+Because the keys of blob objects in the datastore are computed from the
 data they contain, Git is referred to as a 
 <em>content-addressable file system</em>.
 </p>
 
-<p>
-Git stores unpacked blob objects (representing files) under <em>.git/objects</em>.
-If you look there now, you will see two empty folders 
-<em>into</em> and <em>pack</em>.
-Other than these 2 subfolders, the objects folder is empty.
-We will now experiment with creating a blob object from a file
-and adding it to the datastore.
+<p class="csusbdt-callout">
+A 20-byte number is represented using 40 hexidecimal characters.
 </p>
 
 <p>
 In the <em>sam</em> folder, create a file named <em>hello.txt</em> 
 with the text <em>hello</em> stored in it.
 </p>
+
+<pre>
+echo hello > hello.txt
+</pre>
 
 <p>
 Use the <code>git hash-object</code> command as follows
@@ -128,19 +149,36 @@ git hash-object hello.txt
 </pre>
 
 <p>
-This command displays the following 20-byte hash 
-computed from the object meta data followed by the file contents.
+This command displays the following hash 
+computed from a concatenation of meta data and file contents.
 </p>
 
 <pre>
 ce013625030ba8dba906f756967f9e9ca394464a
 </pre>
 
-<p class="csusbdt-callout">
+<p>
 The <code>git hash-object</code> command computes the SHA-1 hash of
-the string <code>"blob "</code>, followed by number of bytes, followed by a zero,
-followed by the file contents; it does not include other file metadata such as
-filename, file permissions, creation date, last modified date, etc.
+of a file using the following process.
+</p>
+
+<pre>
+Git hash = SHA1("blob " + <em>file size</em> + "\0" + <em>file contents</em>)
+</pre>
+
+<p>
+To see this, run the following command
+and verify that it produces the same hash 
+as the <code>git hash-object</code> command.
+</p>
+
+<pre>
+printf "blob 6\0hello\n" | openssl sha1
+</pre>
+
+<p>
+I haven't checked if this works under Windows.
+On Linux use <code>sha1sum</code> instead of <code>openssl sha1</code>.
 </p>
 
 <p>
@@ -163,15 +201,14 @@ Git stores the blob object as a file under the following folder.
 <p>
 Notice that the first 2 characters of the hash 
 are taken for the folder name
-and the remaining 18 characters of the hash
+and the remaining 38 characters of the hash
 are used for the filename.
 </p>
 
 <p>
 Use the <code>git cat-file</code> command 
-with the <code>-t</code> option to determine
+with the <code>-t</code> option to display
 the type of object stored under a given hash.
-This command takes an object identifier as an argument.
 </p>
 
 <pre>
@@ -188,18 +225,29 @@ abbreviation for <code>ce013625030ba8dba906f756967f9e9ca394464a</code>.
 </p>
 
 <p>
-Verify that the type reported by the above command 
-is <em>blob</em>.
+The above command displays the following.
 </p>
 
+<pre>
+blob
+</pre>
+
 <p>
-Use the <code>git cat-file</code> command 
-with the <code>-p</code> option as follows 
+Use the  
+<code>-p</code> option as follows 
 to inspect the contents of a git object.
 </p>
 
 <pre>
 git cat-file -p ce01
+</pre>
+
+<p>
+The above command displays the following.
+</p>
+
+<pre>
+hello
 </pre>
 
 <p>
@@ -850,12 +898,12 @@ tags don't need to point to commit objects;
 they can point to any type of git object.
 </p>
 
-<h2>Remote references</h2>
+<h2>Remote References</h2>
 
 <p>
 In addition to branch heads and tags, 
 a third type of reference is a remote reference.
-A remote ref is a hash for a commit in a remote repository.
+A remote ref is a hash for an object in a remote repository.
 </p>
 
 <p>
