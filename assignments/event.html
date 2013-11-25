@@ -3,6 +3,10 @@ layout: assignment
 title: Events Assignment
 ---
 
+<div class="csusbdt-video-btn">
+  <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/ZpgXlXY2J0M">Video</a>
+</div>
+
 <h2>Overview</h2>
 
 <p>
@@ -13,7 +17,8 @@ The purpose of this assignment is to better understand
 <p>
 Events in server-side Node.js are different than 
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event">events in client-side Web pages</a>,
-which you also need to learn about but is not covered in this assignment.
+which you also need to learn about, 
+but are not covered in this assignment.
 </p>
 
 <h2>Assignment folder</h2>
@@ -211,3 +216,12 @@ in the example given above.
 if (Math.random() > .5) throw new Error("I'm bad.");
 </pre>
 
+<p>
+Place the error handling server code in <em>main.js</em>
+and modify it
+so that a response code of 200 is
+returned to the client when there is an error.
+Also, have the server send the message "Please try again later."
+Finally, increase the probability that an error occurs to 75%.
+</p>
+ 
