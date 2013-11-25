@@ -3,6 +3,10 @@ layout: assignment
 title: Callbacks Assignment
 ---
 
+<div class="csusbdt-video-btn">
+  <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/AoYHlKOhCUI">Video</a>
+</div>
+
 <h2>Overview</h2>
 
 <p>
@@ -65,13 +69,12 @@ By the end of the assignment, this folder should contain the following files.
 </p>
 
 <ul>
-<li>README.md</li>
 <li>parallel.js</li>
 <li>sequential.js</li>
 <li>error.js</li>
 </ul>
 
-## Instructions
+<h2>Instructions</h2>
 
 <p>
 The following function <code>f</code> typifies a Javascript function
@@ -123,11 +126,13 @@ f's activity ends.
 
 <p>
 For this assignment, you should invoke <code>f</code> 3 times in two different ways.
-In the first way, the 3 invocations run sequentially.  In the second way, they run in parallel.
+In the first way, the 3 invocations run sequentially. 
+In the second way, they run in parallel.
 </p>
 
 <p>
-Create a file named _sequential.js_ that contains the definition of <code>f</code> 
+Create a file named <em>sequential.js</em> 
+that contains the definition of <code>f</code> 
 and code that invokes <code>f</code> 3 times
 so that they run in sequence and then print the word <em>done</em> at the end.
 The result of the program is the following.
@@ -149,7 +154,7 @@ Create another file named <em>parallel.js</em>
 that contains the definition of <code>f</code> 
 and code that invokes <code>f</code> 3 times 
 so that each instance runs in parallel and 
-then print the word <em>done</em> after all invocations complete. 
+then prints the word <em>done</em> after all invocations complete. 
 The result of the program is the following. 
 Do not modify the function <code>f</code> to solve this problem.
 </p>
@@ -200,7 +205,7 @@ f(callback3);
 <h2>Callbacks that take errors</h2>
 
 <p>
-The convention in nodejs is that if a function that takes a callback can generate and error,
+The convention in nodejs is that if a function that takes a callback can generate an error,
 then the first argument of the callback holds the error.
 This first argument, typically named <code>err</code>,
 is either set to <code>null</code> (in the case of no error) 
