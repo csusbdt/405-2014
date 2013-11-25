@@ -1,7 +1,11 @@
 ---
 layout: assignment
-title: HTML Assignment
+title: File Assignment
 ---
+
+<div class="csusbdt-video-btn">
+  <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/v9bMJzCI9tA">Video</a>
+</div>
 
 <h2>Overview</h2>
 
@@ -13,14 +17,13 @@ and deliver their contents to requesting clients.
 <h2>Assignment folder</h2>
 
 <p>
-Create a directory named <code>html</code> 
+Create a directory named <code>file</code> 
 for the work you do for this assignment. 
 At the end of the assignment, 
 this folder will contain the following files.
 </p>
 
 <ul>
-<li>README.md</li>
 <li>app.html</li>
 <li>main.js</li>
 <li>root.js</li>
@@ -43,6 +46,8 @@ we return the contents of the buffer.
 
 <p>
 Copy main.js from <a href="https://github.com/csusbdt/405-2014/wiki/Buffers">the buffers assignment</a>. 
+Use the code I provided in the Web page,
+not the code that you submitted for the assignment.
 </p>
 
 <p>
@@ -89,6 +94,23 @@ There are many ways to return the image from the server,
 but for this assignment you should create a module 
 similar to root.js that does the job. 
 Call the module file <em>image.js</em>.
+</p>
+
+<p>
+Write the code so that the activities started by 
+the init function of 
+the <code>root</code> and <code>image</code> modules
+both complete before the <code>main</code> module
+starts to listen for connections.
+</p>
+
+<p>
+You'll need to set the <code>Content-Type</code> 
+appropriately for the image data that you return.
+For example, if the image is a png file, 
+then the content type
+is <code>image/png</code>; if it's a jpg file,
+the content type is <code>image/jpeg</code>.
 </p>
 
 <p>
