@@ -3,6 +3,10 @@ layout: assignment
 title: Json Assignment
 ---
 
+<div class="csusbdt-video-btn">
+  <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/dDvGR1QZm5E">Video</a>
+</div>
+
 <h2>Overview</h2>
 
 <p>
@@ -12,11 +16,11 @@ The purpose of this assignment is to learn how to return ajax data in the JSON f
 <h2>Assignment folder</h2>
 
 <p>
-Create a directory named ajax for the work you do for this assignment. At the end of the assignment, this folder will contain the following files.
+Create a directory named <em>json</em> for the work you do for this assignment. 
+At the end of the assignment, this folder will contain the following files.
 </p>
 
 <ul>
-<li>README.md</li>
 <li>app.html</li>
 <li>main.js</li>
 <li>root.js</li>
@@ -42,7 +46,7 @@ the message data in the following JSON format.
 </p>
 
 <pre>
-{ "msg": "hello json" }
+{ "msg": "Hello JSON." }
 </pre>
 
 <p>
@@ -50,7 +54,7 @@ The following code shows one way to do this.
 </p>
 
 <pre>
-var responseObject = { msg: 'hello json' };
+var responseObject = { msg: 'Hello JSON.' };
 var responseString = JSON.stringify(responseObject);
 var body = new Buffer(responseString, 'utf-8');
 </pre>
@@ -58,6 +62,30 @@ var body = new Buffer(responseString, 'utf-8');
 <p>
 Change the content-type header in the reply message to 
 <code>application/json</code> without specifying charset.
-I believe you should omit the charset specification; see
+</p>
+
+<p class="csusbdt-callout">
+I believe you should omit the charset specification when returning JSON data; see
 <a href="http://stackoverflow.com/questions/13096259/can-charset-parameter-be-used-with-application-json-content-type-in-http-1-1/13098683#13098683">this Stackoverflow discussion</a>.
 </p>
+
+<p>
+On the client side you should 
+convert the JSON string
+to a Javascript object
+and then extract the message data from this object.
+The following shows how to do this.
+</p>
+
+<pre>
+var resDataString = httpRequest.responseText;
+var resData = JSON.parse(resDataString);
+var msg = resData.msg;
+// Display msg to the user.
+</pre>
+
+<p>
+Only display the message <em>Hello JSON</em> to the user,
+do not display the JSON string.
+</p>
+
