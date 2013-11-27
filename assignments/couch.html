@@ -50,8 +50,11 @@ Here are some resources that I used.
 <p>
 Install CouchDB and start it. When Couch starts, 
 it will open a tab inside your browser
-and retrieve the main page of the browser-based interface to the database, called <em>Futon</em>.
-The instructions in this assignment do not involve this interface,
+and retrieve the main page 
+of the browser-based interface 
+to the database, called <em>Futon</em>.
+The instructions in this assignment 
+do not involve this interface,
 but it is probably useful to learn.
 </p>
 
@@ -61,10 +64,12 @@ I can think of 4 ways to interact with a Couch database.
 
 <ul>
 <li>The browser interface (Futon)</li>
-<li>Command line tools that support the construction of HTTP messages, such as curl</li>
-<li>Directly from a language that supports construction of HTTP messages</li>
 <li>Indirectly through a CouchDB driver written for a specific language</li>
+<li>Directly from a language that supports construction of HTTP messages</li>
+<li>Command line tools that support the construction of HTTP messages, such as curl</li>
 </ul>
+
+<h3>Database Interaction through Curl</h3>
 
 <p>
 This assignment uses <a href="http://curl.haxx.se/">curl</a> 
@@ -92,7 +97,7 @@ curl -X GET http://localhost:5984/_all_dbs
 </pre>
 
 <p>
-Create a database named _test_.
+Create a database named <code>test</code>.
 </p>
 
 <pre>
@@ -103,6 +108,8 @@ curl -X PUT http://localhost:5984/test
 Verify that the database was created by re-running 
 the command to list the names of all databases.
 </p>
+
+<h3>Database Documents</h3>
 
 <p>
 Verify that the test database contains no documents.
@@ -117,7 +124,7 @@ Consider the following Javascript object.
 </p>
 
 <pre>
-var obj = { _id: 'a', x: 1};
+var obj = { _id: 'a', x: 1 };
 </pre>
 
 <p>
@@ -156,7 +163,7 @@ these are not actually part of the JSON representation of <code>obj</code>.
 </p>
  
 <p>
-Use curl as follows to send add the JSON representation of obj to the test database.
+Use curl as follows to send the JSON representation of obj to the test database.
 Note that the value for the <code>-d</code> argument needs to be quoted.
 </p>
 
@@ -165,7 +172,8 @@ curl -X POST http://localhost:5984/test -H "Content-type: application/json" -d '
 </pre>
 
 <p>
-Verify that the test database contains contains the document.
+Use the following command to 
+verify that the test database contains contains the document.
 </p>
 
 <pre>
@@ -177,24 +185,26 @@ Insert JSON representations of the following additional Javascript objects.
 </p>
 
 <pre>
-{ _id: 'b', x: 1}
-{ _id: 'c', x: 2}
-{ _id: 'd', y: 1}
+{ _id: 'b', x: 1 }
+{ _id: 'c', x: 2 }
+{ _id: 'd', y: 1 }
 </pre>
 
+<h3>Views</h3>
+
 <p>
-In a Couch database, documents that have id's that are prefixed with _design
-have a special function and are called <em>design</em> documents.
+In a Couch database, documents that have ids that are prefixed with _design
+have a special function and are called <em>design documents</em>.
 Design documents contain Javascript functions that are run at various times.
 One type of design document function is called a view.
-I view is used to generate derived data from the database,
+A view is used to generate derived data from the database,
 similar to an SQL query.
 </p>
 
 <p>
-The following design document has an id of <code>design/adesign</code>. 
+The following design document has an id of <code>_design/adesign</code>. 
 It contains a sub-object
-named <code>views</code> that contains a single view named <code>aview</code>.
+named <code>views</code>, which contains a single view named <code>aview</code>.
 This view has map and reduce functions defined.
 Couch uses an approach called <code>MapReduce</code> to maintain views efficiently;
 you can read about it in
@@ -214,7 +224,7 @@ you can read about it in
 </pre>
 
 <p>
-The aview computes the sum of all values for <code>x</code> 
+The view <code>aview</code> computes the sum of all values for <code>x</code> 
 that exist in documents within the test database.
 </p>
 
@@ -244,7 +254,8 @@ This tells curl to treat the string as a filename.
 
 <p>
 Look again at the map function in the design document.
-This function is called for each document that gets created or modified in the database.
+This function is called for each document 
+that gets created or modified in the database.
 The following is the function reformatted to read more easily.
 </p>
 
@@ -258,14 +269,16 @@ function(doc) {
 
 <p>
 Each time the function is called,
-the function checks to see of <code>doc.x</code> evaluates to <code>true</code>.
+the function checks to see if <code>doc.x</code> 
+evaluates to <code>true</code>.
 If it does, then it invokes a function called <code>emit</code>,
 which is provided by the Javascript runtime environment of the database.
-The function emit returns a pair that is used to update a map
+The function <code>emit</code> 
+returns a pair that is used to update a map
 that is maintained by the view.
 In our case, we associate the name <code>'x'</code> 
-with the document <code>x</code> values
-for those documents that contain an <code>x</code> value.
+with the value of <code>doc.x</code>
+when <code>doc.x</code> exists.
 </p>
 
 <p>
@@ -280,13 +293,15 @@ function(key, values) {
 
 <p>
 The reduce function is called to aggregate values returned by the map function.
-The second argument of the reduce function (<code>values</code> above)
-is an array of values that the reduce functions should aggregate into a single value,
-which it returns.
 The first argument (<code>key</code> above) 
 provides information about where the values came from.
 See <a href="http://wiki.apache.org/couchdb/Introduction_to_CouchDB_views">Introduction to CouchDB Views</a>
 for a detailed explanation.
+The second argument of the reduce function (<code>values</code> above)
+is an array of values that the reduce function should aggregate into a single value,
+which it returns.
+In our case, <code>values</code> is an array that contains
+values of <code>x</code> that we emitted in the map function.
 </p>
 
 <p>
@@ -296,6 +311,8 @@ To see the result of the view, do the following.
 <pre>
 curl -X GET http://localhost:5984/test/_design/adesign/_view/aview
 </pre>
+
+<h3>Database Access Control</h3>
 
 <p>
 Currently, there are no database users,
@@ -311,7 +328,8 @@ such as creating and deleting databases.
 
 <p>
 Creating an admin user keeps non-admin users from performing server administration tasks.
-The following command creates an admin user named <em>admin</em> with password <em>1234</em>.
+Run the following command to 
+create an admin user named <em>admin</em> with password <em>1234</em>.
 </p>
 
 <pre>
@@ -375,7 +393,8 @@ Create file <em>security.json</em> with the following contents.
 </pre>
 
 <p>
-Write this version of the security object into the test database.
+Run the following command to
+write this version of the security object into the test database.
 </p>
 
 <pre>
@@ -383,8 +402,8 @@ curl -X PUT http://admin:1234@localhost:5984/test/_security -d @security.json -H
 </pre>
 
 <p>
-Run the command again to retrieve the security object and observe that you no longer have read
-access to it.
+Run the command again to retrieve the security object;
+observe that you no longer have read access to it.
 </p>
 
 <pre>
@@ -392,7 +411,8 @@ curl -X GET http://localhost:5984/test/_security
 </pre>
 
 <p>
-Verify that you can also not read any of the documents we inserted into the test database.
+Verify that you can also not read 
+any of the documents we inserted into the test database.
 </p>
 
 <pre>
@@ -408,6 +428,8 @@ curl -X GET http://admin:1234@localhost:5984/test/_security
 curl -X GET http://admin:1234@localhost:5984/test/a
 </pre>
 
+<h3>Test Data Creation Script</h3>
+
 <p>
 When developing an application that relies on a database,
 it is very useful to have a script that resets the application's database
@@ -416,15 +438,18 @@ This allows you to test for specific functionality that you may be in the
 process of developing.
 It also allows you to easily delete old data that may not be consistent with
 recent changes to application logic.
-Create a script file named _createdb.bat_ (if on Windows) or
+Create a script file named <code>createdb.bat</code> (if on Windows) or
 <em>createdb.sh</em> (if on OS X or Linux) that deletes the test database
 and then recreates it with the security object and example documents
 used in this assignment.
 To write this script,
-you need to research the CouchDB documentation to learn how to delete a database.
+you need to research the CouchDB documentation 
+to learn how to delete a database.
 (The purpose of not providing the answer to you here is that you should
-practice accessing the CouchDB documentation to solve problems and expand your understanding.)
+practice accessing the CouchDB documentation to solve problems.)
 </p>
+
+<h3>View Logging</h3>
 
 <p>
 It is possible to write to a log file from within design functions.
