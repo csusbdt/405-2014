@@ -81,6 +81,7 @@ this folder will contain the following files.
 <li>root.js</li>
 <li>image.js</li>
 <li>message.js</li>
+<li>response.js</li>
 </ul>
 
 <h2>Experiment with ETags</h2>
@@ -253,12 +254,6 @@ because the ETags will take on new values when files change.
 </p>
 
 <p>
-You should add code to <em>root.js</em>
-that adds the ETag header when it returns <em>app.html</em>
-to the browser.
-</p>
-
-<p>
 Also, add code 
 that checks the ETag sent by the browser.
 If the supplied ETag matches the ETag for app.html, 
@@ -270,8 +265,6 @@ and the new ETag value.
 
 <p>
 The following function shows how to return a <em>304 Not modified</em> response. 
-You can add this function to <em>root.js</em>
-and call it from within the request handler.
 </p>
 
 <pre>
@@ -279,6 +272,21 @@ replyNotModified = function(res) {
   res.writeHead(304);
   res.end();
 };
+</pre>
+
+<p>
+If in your code <code>etag</code> represents the ETag
+for <em>app.html</em>,
+than the following code makes this check and passes
+control to replyNotModified if the browser's stored ETag matches 
+the current ETag.
+</p>
+
+<pre>
+if (req.headers['if-none-match'] === etag) {
+  console.log('returning 304');
+  return replyNotModified(res);
+}
 </pre>
 
 <p>
@@ -308,6 +316,22 @@ then restart the server and
 verify that the browser retrieves the new version of the Web page.
 Also verify that subsequent requests for the Web page
 result in reliance on the local cache.
+</p>
+
+<p>
+Modify your application so that
+ETags are also sent with your image.
+</p>
+
+<p>
+Notice that the <code>generateETag</code> and <code>replyNotModified</code>
+functions are needed in both <code>root.js</code> and <code>image.js</code>.
+Create a new module named <code>response.js</code>
+to contain functions that will be accessed from more than
+one request handling module.
+Place <code>generateETag</code> and <code>replyNotModified</code> 
+in <code>response.js</code>
+and from <code>root.js</code> and <code>image.js</code>.
 </p>
 
 <h2>Turn Caching Off</h2>
