@@ -8,8 +8,10 @@ title: Read Assignment
 <p>
 The purpose of this assignment is 
 to learn how to read documents from a CouchDB database 
-from inside a Nodejs program.  
-This assignment will give you experience accessing a REST-based API.
+from inside a Node.js program.  
+This assignment will also give you experience accessing 
+remote services using HTTP.
+Such services are sometimes referred to as <em>Web services</em>.
 </p>
 
 <p>
@@ -41,31 +43,37 @@ this folder will contain the following files.
 <li>root.js</li>
 <li>db.js</li>
 <li>main.js</li>
+<li>response.js</li>
 </ul>
 
 <h2>Reading</h2>
 
 <ul>
 <li>Read relevant parts of the CouchDB documentation.</li>
-<li>Read the Nodejs documentation on HTTP client.</li>
+<li>Read the Node.js documentation on HTTP client.</li>
 </ul>
 
 <h2>Instructions</h2>
 
+<h3>Copy Existing Code</h3>
+
 <p>
-Copy your app server code from the ajax assignment 
-to the read folder as a starting point.
+Copy your app server code from the cache assignment 
+to the <em>read</em> folder as a starting point.
 Test that the application is working correctly by visiting 
 <a href="http://localhost:5000/">http://localhost:5000/</a> 
 in a browser.
 </p>
+
+<h3>Create Database</h3>
 
 <p>
 Start your CouchDB server.
 </p>
 
 <p>
-Create file <em>createdb.sh</em> 
+Use what you learned from the CouchDB assignment 
+to create file <em>createdb.sh</em> 
 that contains commands to create a database called <em>read</em>.
 The create script should insert a document with a property named <em>msg</em>.
 This property should be set to the string <em>the read assignment</em>.
@@ -74,40 +82,14 @@ field so that we can identify
 this document in a straightforward way.
 </p>
 
+<h3>Create Database Interaction Module</h3>
+
 <p>
-Modify the ajax message request handler 
-to retrieve the message string from the database
-and return this to the client.
-The following code shows how this can be done.
+Create file named <code>db.js</code>
+with the following code.
+This module exposes a <code>getMsg</code> function
+that retrieves the message from the database.
 </p>
-
-<div class="csusbdt-code-title">message.js</div>
-
-<pre>
-var http = require('http');
-var db = require('./db');
-
-exports.handle = function(req, res) {
-  console.log('getMsg called.');
-  db.getMsg(function(err, msg) {
-    if (err) {
-      res.writeHead(500);
-      res.end();
-      return;
-    } 
-    var responseObject = { msg: msg };
-    var responseString = JSON.stringify(responseObject);
-    var body = new Buffer(responseString, 'utf-8');
-    res.writeHead(200, {
-      'Content-Type': 'application/json',
-      'Content-Length': body.length,
-      'Pragma': 'no-cache',
-      'Cache-Control': 'no-cache, no-store'
-    });
-    res.end(body);
-  });
-};
-</pre>
 
 <div class="csusbdt-code-title">db.js</div>
 
@@ -178,3 +160,42 @@ function send(options, cb) {
   req.end();
 };
 </pre>
+
+<p>
+The <code>db.getMsg</code> calls the <code>read</code> function,
+which calls the Node.js <code>request</code> function 
+from the <code>http</code> module.
+The <code>request</code> function returns an instance of <code>ClientRequest</code>.
+This is used to send an HTTP message to the database server.
+So, in this part of our code,
+our Web server plays the role of a Web client.
+</p>
+
+<h3>Modify the Message Request Handler</h3>
+
+<p>
+Now that we have a way to retrieve the message string
+from the database,
+we can modify the message request handler to 
+get the message string this way.
+You should modify the message request handler 
+to retrieve the message string from the database
+using our new <code>db</code> module.
+</p>
+
+<h3>Test</h3>
+
+<p>
+First, test that the browser gets the current mesage from our server
+and the server code runs without error.
+</p>
+
+<p>
+Second, while our server is running,
+modify the datbase creation script to insert a 
+different message.
+Then refresh the Web page and observe that the new
+message is displayed to the user.
+Do this test without restarting the Web application server.
+</p>
+
