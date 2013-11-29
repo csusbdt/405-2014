@@ -16,13 +16,8 @@ called <a href="http://couchdb.apache.org/">CouchDB</a>.
 </p>
 
 <p>
-The assignment covers a feature of CouchDB called <em>views</em>,
-which use rely on a technique called 
-<a href="http://en.wikipedia.org/wiki/MapReduce">MapReduce</a>,
-which is used to work with large data sets.
-However, the code that we develop in later assignments does not 
-utilize <em>views</em>.
-Instead, the code relies only on the ability
+The code developed in this course
+relies only on the ability
 of CouchDB to function as a key-value store.
 The benefit of this restriction is that
 code developed in this way can be easily modified
@@ -31,31 +26,8 @@ provide key-value functionality.
 </p>
 
 <p>
-I would be hesitant to use CouchDB in a production system
-until more positive reports of its stability and benefits and emerge.
-I'm current considering PostgreSQL hstore 
-because it's available on Heroku,
-which is a platform I have been developing on.
-</p>
-
-<p>
-CouchDB provides replication with <em>eventual consistency</em>.
-Many large-scale Web applications are built on database systems
-with this property.
-I believe that eventual consistency in the datastore is unavoidable
-in applications that could grow to support a large number of interactions.
-If this is the case with your application,
-then you need to carefully design with eventual consistency in mind.
-I won't go into the details here,
-but may discuss in a later assignment.
-</p>
-
-<p>
-I also believe database sharding can be implemented directly
-without too much trouble,
-although I have not done this yet.
-If this is the case, I would not reply 
-on any automatic sharding of a database.
+CouchDB provides replication with <em>eventual consistency</em>,
+which I believe is unavoidable in large scale applications.
 </p>
 
 <h2>Assignment Folder</h2>
@@ -69,7 +41,6 @@ this folder will contain the following files.
 
 <ul>
 <li>README.md</li>
-<li>adesign.json</li>
 <li>security.json</li>
 <li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
 </ul>
@@ -100,9 +71,9 @@ Here are some resources that I used.
 Install CouchDB and start it. 
 When Couch starts, 
 it will open a tab inside your browser
-and retrieve the main page 
-of the browser-based interface 
-to the database called <em>Futon</em>.
+and retrieve the main page of <em>Futon</em>, 
+the browser-based interface 
+to the database.
 The instructions in this assignment 
 do not involve this interface,
 but it is probably useful to learn.
@@ -240,6 +211,158 @@ Insert JSON representations of the following additional Javascript objects.
 { _id: 'd', y: 1 }
 </pre>
 
+<h3>Database Access Control</h3>
+
+<p>
+Currently, there are no database users,
+so the Couch server runs every operation submitted to it.
+To limit what clients can do, we need to create database users.
+</p>
+
+<p>
+In Couch, there is a special group of users called <em>admin</em>.
+Admin users can perform server administration tasks, 
+such as creating and deleting databases.
+</p>
+
+<p>
+Creating an admin user keeps non-admin users from performing server administration tasks.
+Run the following command to 
+create an admin user named <em>admin</em> with password <em>1234</em>.
+</p>
+
+<pre>
+curl -X PUT http://localhost:5984/_config/admins/admin -d '"1234"'
+</pre>
+
+<p class="csusbdt-callout>
+You can have an admin user with a name other than <em>admin</em>
+and you can more than one for the database.
+</p>
+
+<p>
+To see that non-authenticated users can no longer create databases,
+try to create a database named <code>x</code>.
+</p>
+
+<pre>
+curl -X PUT http://localhost:5984/x
+</pre>
+
+<p>
+The above command should now fail because we created an admin user.
+To succeed at creating a database,
+you need to provide the username 
+and password of an admin user in the HTTP request URL.
+The following shows how to do this for our example.
+</p>
+
+<pre>
+curl -X PUT http://admin:1234@localhost:5984/x
+</pre>
+
+<p>
+Creating an admin user keeps others from performing server administration operations.
+However, non-authenticated users can still read and write to our test database because
+we have not created a security object for it.
+Run the following to see that no users are part of the test database's security object.
+</p>
+
+<pre>
+curl -X GET http://localhost:5984/test/_security
+</pre>
+
+<p>
+The security object and security mechanism to support authorization is very flexible.
+But we will not investigate this in depth.
+Instead, we will use a simple security configuration that makes the admin user the
+only user who can write to and read from the database.
+</p>
+
+<p>
+Create file <em>security.json</em> with the following contents.
+</p>
+
+<pre>
+{
+   "admins" : {
+      "roles" : [],
+      "names" : ["admin"]
+   },
+   "readers" : {
+      "roles" : [],
+      "names" : ["admin"]
+   }
+}
+</pre>
+
+<p>
+Run the following command to
+write this version of the security object into the test database.
+</p>
+
+<pre>
+curl -X PUT http://admin:1234@localhost:5984/test/_security -d @security.json -H "Content-type: application/json"
+</pre>
+
+<p>
+Run the command again to retrieve the security object;
+observe that you no longer have read access to it.
+</p>
+
+<pre>
+curl -X GET http://localhost:5984/test/_security
+</pre>
+
+<p>
+Verify that you can also not read 
+any of the documents we inserted into the test database.
+</p>
+
+<pre>
+curl -X GET http://localhost:5984/test/a
+</pre>
+
+<p>
+Now verify that you can perform these reads as the admin user.
+</p>
+
+<pre>
+curl -X GET http://admin:1234@localhost:5984/test/_security
+curl -X GET http://admin:1234@localhost:5984/test/a
+</pre>
+
+<h3>Database Creation Script</h3>
+
+<p>
+When developing an application that relies on a database,
+it is very useful to have a script that resets the application's database
+to a specific state.
+This allows you to test for specific functionality that you may be in the
+process of developing.
+It also allows you to easily delete old data that may not be consistent with
+recent changes to application logic.
+Create a script file named <code>createdb.bat</code> (if on Windows) or
+<em>createdb.sh</em> (if on OS X or Linux) that deletes the test database
+and then recreates it with the security object and example documents
+used in this assignment.
+To write this script,
+you need to research the CouchDB documentation 
+to learn how to delete a database.
+(The purpose of not providing the answer to you here is that you should
+practice accessing the CouchDB documentation to solve problems.)
+</p>
+
+<span class="text-muted" style="visibility: hidden">
+
+<h2>OPTIONAL MATERIAL STARTS HERE</h2>
+
+<p>
+This section covers a feature of CouchDB called <em>views</em>,
+which rely on a technique called 
+<a href="http://en.wikipedia.org/wiki/MapReduce">MapReduce</a>.
+</p>
+
 <h3>Views</h3>
 
 <p>
@@ -362,143 +485,6 @@ To see the result of the view, do the following.
 curl -X GET http://localhost:5984/test/_design/adesign/_view/aview
 </pre>
 
-<h3>Database Access Control</h3>
-
-<p>
-Currently, there are no database users,
-so the Couch server runs every operation submitted to it.
-To limit what clients can do, we need to create database users.
-</p>
-
-<p>
-In Couch, there is a special group of users called <em>admin</em>.
-Admin users can perform server administration tasks, 
-such as creating and deleting databases.
-</p>
-
-<p>
-Creating an admin user keeps non-admin users from performing server administration tasks.
-Run the following command to 
-create an admin user named <em>admin</em> with password <em>1234</em>.
-</p>
-
-<pre>
-curl -X PUT http://localhost:5984/_config/admins/admin -d '"1234"'
-</pre>
-
-<p>
-To see that non-authenticated users can no longer create databases,
-try to create a database named <code>x</code>.
-</p>
-
-<pre>
-curl -X PUT http://localhost:5984/x
-</pre>
-
-<p>
-The above command should now fail because we created an admin user.
-To succeed at creating a database,
-you need to provide the username 
-and password of an admin user in the HTTP request URL.
-The following shows how to do this for our example.
-</p>
-
-<pre>
-curl -X PUT http://admin:1234@localhost:5984/x
-</pre>
-
-<p>
-Creating an admin user keeps others from performing server administration operations.
-However, non-authenticated users can still read and write to our test database because
-we have not created a security object for it.
-Run the following to see that no users are part of the test database's security object.
-</p>
-
-<pre>
-curl -X GET http://localhost:5984/test/_security
-</pre>
-
-<p>
-The security object and security mechanism to support authorization is very flexible.
-But we will not investigate this in depth.
-Instead, we will use a simple security configuration that makes the admin user the
-only user who can write to and read from the database.
-</p>
-
-<p>
-Create file <em>security.json</em> with the following contents.
-</p>
-
-<pre>
-{
-   "admins" : {
-      "roles" : [],
-      "names" : ["admin"]
-   },
-   "readers" : {
-      "roles" : [],
-      "names" : ["admin"]
-   }
-}
-</pre>
-
-<p>
-Run the following command to
-write this version of the security object into the test database.
-</p>
-
-<pre>
-curl -X PUT http://admin:1234@localhost:5984/test/_security -d @security.json -H "Content-type: application/json"
-</pre>
-
-<p>
-Run the command again to retrieve the security object;
-observe that you no longer have read access to it.
-</p>
-
-<pre>
-curl -X GET http://localhost:5984/test/_security
-</pre>
-
-<p>
-Verify that you can also not read 
-any of the documents we inserted into the test database.
-</p>
-
-<pre>
-curl -X GET http://localhost:5984/test/a
-</pre>
-
-<p>
-Now verify that you can perform these reads as the admin user.
-</p>
-
-<pre>
-curl -X GET http://admin:1234@localhost:5984/test/_security
-curl -X GET http://admin:1234@localhost:5984/test/a
-</pre>
-
-<h3>Database Creation Script</h3>
-
-<p>
-When developing an application that relies on a database,
-it is very useful to have a script that resets the application's database
-to a specific state.
-This allows you to test for specific functionality that you may be in the
-process of developing.
-It also allows you to easily delete old data that may not be consistent with
-recent changes to application logic.
-Create a script file named <code>createdb.bat</code> (if on Windows) or
-<em>createdb.sh</em> (if on OS X or Linux) that deletes the test database
-and then recreates it with the security object and example documents
-used in this assignment.
-To write this script,
-you need to research the CouchDB documentation 
-to learn how to delete a database.
-(The purpose of not providing the answer to you here is that you should
-practice accessing the CouchDB documentation to solve problems.)
-</p>
-
 <h3>View Logging</h3>
 
 <p>
@@ -549,3 +535,7 @@ contents, and re-open the file to see new contents that are added to it.
 While trying to understand how map reduce works, I found it helpful to
 call the log function inside the map and reduce functions.
 </p>
+
+</span>
+
+
