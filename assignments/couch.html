@@ -3,18 +3,65 @@ layout: assignment
 title: CouchDB Assignment
 ---
 
+<div class="csusbdt-video-btn">
+  <a class="btn btn-success" role="button" target="_blank" href="">Video</a>
+</div>
+
 <h2>Overview</h2>
 
 <p>
 The purpose of this assignment 
-is to learn how to setup a database 
+is to learn about a database 
 called <a href="http://couchdb.apache.org/">CouchDB</a>.
 </p>
 
-<h2>Assignment folder</h2>
+<p>
+The assignment covers a feature of CouchDB called <em>views</em>,
+which use rely on a technique called 
+<a href="http://en.wikipedia.org/wiki/MapReduce">MapReduce</a>,
+which is used to work with large data sets.
+However, the code that we develop in later assignments does not 
+utilize <em>views</em>.
+Instead, the code relies only on the ability
+of CouchDB to function as a key-value store.
+The benefit of this restriction is that
+code developed in this way can be easily modified
+to work with any number of datastores that
+provide key-value functionality.
+</p>
 
 <p>
-Create a directory named <code>couch</code> 
+I would be hesitant to use CouchDB in a production system
+until more positive reports of its stability and benefits and emerge.
+I'm current considering PostgreSQL hstore 
+because it's available on Heroku,
+which is a platform I have been developing on.
+</p>
+
+<p>
+CouchDB provides replication with <em>eventual consistency</em>.
+Many large-scale Web applications are built on database systems
+with this property.
+I believe that eventual consistency in the datastore is unavoidable
+in applications that could grow to support a large number of interactions.
+If this is the case with your application,
+then you need to carefully design with eventual consistency in mind.
+I won't go into the details here,
+but may discuss in a later assignment.
+</p>
+
+<p>
+I also believe database sharding can be implemented directly
+without too much trouble,
+although I have not done this yet.
+If this is the case, I would not reply 
+on any automatic sharding of a database.
+</p>
+
+<h2>Assignment Folder</h2>
+
+<p>
+Create a directory named <em>couch</em> 
 for the work you do for this assignment. 
 At the end of the assignment, 
 this folder will contain the following files.
@@ -42,17 +89,20 @@ Here are some resources that I used.
 <li><a href="http://jpmens.net/2010/04/20/the-antepenultimate-couchdb-reference-card/">The Antepenultimate CouchDB Reference Card (cheat sheet)</a></li>
 <li><a href="http://sauceio.com/index.php/2012/05/goodbye-couchdb/">Goodbye, CouchDB</a></li>
 <li><a href="http://www.julianbrowne.com/article/viewer/brewers-cap-theorem">Brewer's CAP Theorem</a></li>
-<li><a href="http://www.allthingsdistributed.com/2008/12/eventually_consistent.html">Eventually Consistent - Revisited</a> I need to read this.</li>
+<li><a href="http://www.allthingsdistributed.com/2008/12/eventually_consistent.html">Eventually Consistent - Revisited</a></li>
 </ul>
 
 <h2>Instructions</h2>
 
+<h3>Install and Run CouchDB</h3>
+
 <p>
-Install CouchDB and start it. When Couch starts, 
+Install CouchDB and start it. 
+When Couch starts, 
 it will open a tab inside your browser
 and retrieve the main page 
 of the browser-based interface 
-to the database, called <em>Futon</em>.
+to the database called <em>Futon</em>.
 The instructions in this assignment 
 do not involve this interface,
 but it is probably useful to learn.
