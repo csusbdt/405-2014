@@ -19,37 +19,26 @@ called <a href="http://couchdb.apache.org/">CouchDB</a>.
 The code developed in this course
 relies only on the ability
 of CouchDB to function as a key-value store.
-The benefit of this restriction is that
-code developed in this way can be easily modified
+As a result, the code can be more easily modified
 to work with any number of datastores that
-provide key-value functionality.
+provide simple key-value functionality.
 </p>
 
 <p>
-CouchDB provides replication with <em>eventual consistency</em>,
-which I believe is unavoidable in large scale applications.
+A key-value datastore is a map that associates keys with values.
+In the case of CouchDB,
+the key is a string and the value is a JSON string.
 </p>
-
-<h2>Assignment Folder</h2>
 
 <p>
-Create a directory named <em>couch</em> 
-for the work you do for this assignment. 
-At the end of the assignment, 
-this folder will contain the following files.
+CouchDB provides multi-master replication with eventual consistency.
 </p>
-
-<ul>
-<li>README.md</li>
-<li>security.json</li>
-<li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
-</ul>
 
 <h2>Reading</h2>
 
 <p>
-To fully understand this assignment, 
-you will need to read about CouchDB.
+To better understand this assignment, 
+you will need to read about CouchDB and about databases in general.
 Here are some resources that I used.
 </p>
 
@@ -61,6 +50,21 @@ Here are some resources that I used.
 <li><a href="http://sauceio.com/index.php/2012/05/goodbye-couchdb/">Goodbye, CouchDB</a></li>
 <li><a href="http://www.julianbrowne.com/article/viewer/brewers-cap-theorem">Brewer's CAP Theorem</a></li>
 <li><a href="http://www.allthingsdistributed.com/2008/12/eventually_consistent.html">Eventually Consistent - Revisited</a></li>
+<li><a href="http://seldo.com/weblog/2010/07/12/in_defence_of_sql">In defence of SQL</a></li>
+</ul>
+
+<h2>Assignment Folder</h2>
+
+<p>
+Create a directory named <em>couch</em> 
+for the work you do for this assignment. 
+At the end of the assignment, 
+this folder will contain the following files.
+</p>
+
+<ul>
+<li>e.json</li>
+<li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
 </ul>
 
 <h2>Instructions</h2>
@@ -98,11 +102,60 @@ at the command line to explore how Couch works.
 </p>
 
 <p>
-The following instructions assume that you have not yet set an admin password for your database.
-If you set the admin password, then you will need to add the admin name and password with each
-of the commands given.
-For example, if the admin password were <em>1234</em>, 
-then the command to get the names of all the databases on the server would be as follows.
+When you first install and run CouchDB
+there are no database users,
+so the Couch server runs every operation submitted to it.
+As a first step, we will define a server admin user,
+which is a user who can perform the following.
+</p>
+
+<ul>
+<li>Create and delete databases.</li>
+<li>Insert, replace and remove security documents 
+    in a database to define the users of the database.</li>
+<li>Insert, replace and remove design documents, 
+    which is a topic not covered in this assignment.</li>
+<li>Perform other operations.</li>
+</ul>
+
+<p>
+The following instructions
+assume that you create a server admin user 
+named <em>admin</em> with password <em>1234</em>.
+You can create this user through the Futon interface or
+by issuing the following command.
+</p>
+
+<pre>
+curl -X PUT http://localhost:5984/_config/admins/admin -d '"1234"'
+</pre>
+
+<p>
+Creating a server admin user keeps non-admin users 
+from performing server administration tasks.
+To see that non-authenticated users can not create databases,
+try to create a database named <code>x</code> with the following command.
+</p>
+
+<pre>
+curl -X PUT http://localhost:5984/x
+</pre>
+
+<p>
+To create a database,
+you can provide the username 
+and password of a server admin in the HTTP request URL.
+The following shows how to do this for our example.
+</p>
+
+<pre>
+curl -X PUT http://admin:1234@localhost:5984/x
+</pre>
+
+<p>
+After running the above command,
+run the following to verify 
+that a database named <em>x</em> was created.
 </p>
 
 <pre>
@@ -110,30 +163,31 @@ curl -X GET http://root:1234@localhost:5984/_all_dbs
 </pre>
 
 <p>
-Get an array of names of the databases hosted by the server.
+The above command returns an array of names 
+of the databases hosted by the server.
+</p>
+
+<p>
+Run the following to delete database <em>x</em>.
 </p>
 
 <pre>
-curl -X GET http://localhost:5984/_all_dbs
+curl -X DELETE http://admin:1234@localhost:5984/x
 </pre>
-
-<p>
-Create a database named <code>test</code>.
-</p>
-
-<pre>
-curl -X PUT http://localhost:5984/test
-</pre>
-
-<p>
-Verify that the database was created by re-running 
-the command to list the names of all databases.
-</p>
 
 <h3>Database Documents</h3>
 
 <p>
-Verify that the test database contains no documents.
+In this section,
+we will practice inserting, replacing and deleting documents
+from a database named <em>test</em>.
+Use what you learned in the previous section 
+to create a database named <em>test</em>.
+</p>
+
+<p>
+Use the following command to 
+verify that the test database contains no documents.
 </p>
 
 <pre>
@@ -141,7 +195,9 @@ curl -X GET http://localhost:5984/test/_all_docs
 </pre>
 
 <p>
-Consider the following Javascript object.
+CouchDB stores documents in the form of JSON strings.
+To see this,
+consider the following Javascript object.
 </p>
 
 <pre>
@@ -214,109 +270,31 @@ Insert JSON representations of the following additional Javascript objects.
 <h3>Database Access Control</h3>
 
 <p>
-Currently, there are no database users,
-so the Couch server runs every operation submitted to it.
-To limit what clients can do, we need to create database users.
+We already learned about the concept of a server admin user.
+There are also database admin users and database member users.
+The admin and member users for a database are specified
+in a database security object.
+If there is no security object in a database,
+then non-authenticated clients can access the database.
+If a security object is inserted into the database,
+then only authenticated clients can access the database.
 </p>
 
 <p>
-In Couch, there is a special group of users called <em>admin</em>.
-Admin users can perform server administration tasks, 
-such as creating and deleting databases.
-</p>
-
-<p>
-Creating an admin user keeps non-admin users from performing server administration tasks.
-Run the following command to 
-create an admin user named <em>admin</em> with password <em>1234</em>.
+Run the following command to insert an empty security object
+in the test database.
+After doing this, 
+access to the database can only be accomplished through our
+server admin credentials.
 </p>
 
 <pre>
-curl -X PUT http://localhost:5984/_config/admins/admin -d '"1234"'
-</pre>
-
-<p class="csusbdt-callout>
-You can have an admin user with a name other than <em>admin</em>
-and you can more than one for the database.
-</p>
-
-<p>
-To see that non-authenticated users can no longer create databases,
-try to create a database named <code>x</code>.
-</p>
-
-<pre>
-curl -X PUT http://localhost:5984/x
+curl -X PUT http://admin:1234@localhost:5984/test/_security -H "Content-type: application/json" -d '{}'
 </pre>
 
 <p>
-The above command should now fail because we created an admin user.
-To succeed at creating a database,
-you need to provide the username 
-and password of an admin user in the HTTP request URL.
-The following shows how to do this for our example.
-</p>
-
-<pre>
-curl -X PUT http://admin:1234@localhost:5984/x
-</pre>
-
-<p>
-Creating an admin user keeps others from performing server administration operations.
-However, non-authenticated users can still read and write to our test database because
-we have not created a security object for it.
-Run the following to see that no users are part of the test database's security object.
-</p>
-
-<pre>
-curl -X GET http://localhost:5984/test/_security
-</pre>
-
-<p>
-The security object and security mechanism to support authorization is very flexible.
-But we will not investigate this in depth.
-Instead, we will use a simple security configuration that makes the admin user the
-only user who can write to and read from the database.
-</p>
-
-<p>
-Create file <em>security.json</em> with the following contents.
-</p>
-
-<pre>
-{
-   "admins" : {
-      "roles" : [],
-      "names" : ["admin"]
-   },
-   "readers" : {
-      "roles" : [],
-      "names" : ["admin"]
-   }
-}
-</pre>
-
-<p>
-Run the following command to
-write this version of the security object into the test database.
-</p>
-
-<pre>
-curl -X PUT http://admin:1234@localhost:5984/test/_security -d @security.json -H "Content-type: application/json"
-</pre>
-
-<p>
-Run the command again to retrieve the security object;
-observe that you no longer have read access to it.
-</p>
-
-<pre>
-curl -X GET http://localhost:5984/test/_security
-</pre>
-
-<p>
-Verify that you can also not read 
-any of the documents we inserted into the test database.
+After running the above command,
+test that we can no longer access the test database.
 </p>
 
 <pre>
@@ -324,11 +302,12 @@ curl -X GET http://localhost:5984/test/a
 </pre>
 
 <p>
-Now verify that you can perform these reads as the admin user.
+From this point on,
+we need to provide the username and password
+in the HTTP request as shown in the following.
 </p>
 
 <pre>
-curl -X GET http://admin:1234@localhost:5984/test/_security
 curl -X GET http://admin:1234@localhost:5984/test/a
 </pre>
 
@@ -344,13 +323,41 @@ It also allows you to easily delete old data that may not be consistent with
 recent changes to application logic.
 Create a script file named <code>createdb.bat</code> (if on Windows) or
 <em>createdb.sh</em> (if on OS X or Linux) that deletes the test database
-and then recreates it with the security object and example documents
+and then recreates it with the empty security object and example documents
 used in this assignment.
-To write this script,
-you need to research the CouchDB documentation 
-to learn how to delete a database.
-(The purpose of not providing the answer to you here is that you should
-practice accessing the CouchDB documentation to solve problems.)
+</p>
+
+<p>
+When developing test cases,
+it is convenient to read JSON documents from files
+rather than including them directly 
+in the database creation script.
+Let's see how to do this.
+</p>
+
+<p>
+Create a file named <em>e.json</em> with the following contents.
+</p>
+
+<pre>
+{ "_id": "e", "y": 3 }
+</pre>
+
+<p>
+Modify your database creation script
+to insert the contents of <em>e.json</em>
+into the database.
+Do this with the following command.
+</p>
+
+<pre>
+curl -X POST http://localhost:5984/test -H "Content-type: application/json" -d @e.json
+</pre>
+
+<p>
+Verify that your script creates a database
+that contains documents with ids <em>a</em> through <em>e</em>,
+and that access to the database is restricted to the server admin user.
 </p>
 
 <span class="text-muted" style="visibility: hidden">
