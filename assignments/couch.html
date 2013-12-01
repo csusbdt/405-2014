@@ -46,13 +46,36 @@ void  delete(key)
 <p>
 Compared to relational databases,
 key-value stores are simple and fast,
-but it is more difficult to query the data
-to answer questions such as 
+but do not provide a simple query mechanism.
+As a result, it is difficult to answer questions about the data, such as 
 <em>how many customers spent more than 30 dollars?</em>
 </p>
 
 <p>
-CouchDB provides multi-master replication with eventual consistency.
+CouchDB provides 
+<a href="http://en.wikipedia.org/wiki/Multi-master_replication">multi-master replication</a>.
+When a Web application writes to anyone of the database servers,
+the write operation finishes quickly on the chosen server 
+and eventually propagates to all the servers.
+If writes to different database servers are in conflict,
+the conflict will eventually be detected,
+and must be resolved at the application level.
+</p>
+
+<p>
+Multi-master replication provides a means to increase
+availability and responsiveness in applications
+but enables inconsistencies that must be 
+handled by application code.
+We will not cover these topics any further in this course.
+However, I'm interested in this problem,
+so let me know if you want to 
+do an independant study or master's project in this area.
+</p>
+
+<p>
+This assignment uses <a href="http://curl.haxx.se/">curl</a> 
+at the command line to explore how CouchDB works.
 </p>
 
 <h2>Reading</h2>
@@ -84,7 +107,7 @@ this folder will contain the following files.
 </p>
 
 <ul>
-<li>e.json</li>
+<li>d.json</li>
 <li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
 </ul>
 
@@ -105,42 +128,38 @@ but it is probably useful to learn.
 </p>
 
 <p>
-I can think of 4 ways to interact with a Couch database.
+I can think of 4 ways to interact with a CouchDB database.
 </p>
 
 <ul>
-<li>The browser interface (Futon)</li>
-<li>Indirectly through a CouchDB driver written for a specific language</li>
-<li>Directly from a language that supports construction of HTTP messages</li>
-<li>Command line tools that support the construction of HTTP messages, such as curl</li>
+<li>The browser interface (Futon).</li>
+<li>Indirectly through a CouchDB driver written for a specific language.</li>
+<li>Directly from a language that supports construction of HTTP messages.</li>
+<li>Command line tools that support the construction of HTTP messages, such as curl.</li>
 </ul>
 
-<h3>Database Interaction through Curl</h3>
-
-<p>
-This assignment uses <a href="http://curl.haxx.se/">curl</a> 
-at the command line to explore how Couch works.
-</p>
+<h3>Define a Server Admin User</h3>
 
 <p>
 When you first install and run CouchDB
 there are no database users,
 so the Couch server runs every operation submitted to it.
-As a first step, we will define a server admin user,
-which is a user who can perform the following.
+To close this security hole,
+we will define a server admin user,
+which is a user who can operate on databaes.
+We will use the following abilities that 
+con only be performed by 
+a server admin user.
 </p>
 
 <ul>
-<li>Create and delete databases.</li>
-<li>Insert, replace and remove security documents 
-    in a database to define the users of the database.</li>
-<li>Insert, replace and remove design documents, 
-    which is a topic not covered in this assignment.</li>
-<li>Perform other operations.</li>
+<li>Create a database.</li>
+<li>Delete a database.</li>
+<li>Insert a security object into a database to control access to the database.</li>
 </ul>
 
 <p>
-The following instructions
+The instructions in this assignment
 assume that you create a server admin user 
 named <em>admin</em> with password <em>1234</em>.
 You can create this user through the Futon interface or
@@ -155,11 +174,12 @@ curl -X PUT http://localhost:5984/_config/admins/admin -d '"1234"'
 Creating a server admin user keeps non-admin users 
 from performing server administration tasks.
 To see that non-authenticated users can not create databases,
-try to create a database named <code>x</code> with the following command.
+try to create a database named <code>test</code> 
+with the following command.
 </p>
 
 <pre>
-curl -X PUT http://localhost:5984/x
+curl -X PUT http://localhost:5984/test
 </pre>
 
 <p>
@@ -170,33 +190,108 @@ The following shows how to do this for our example.
 </p>
 
 <pre>
-curl -X PUT http://admin:1234@localhost:5984/x
+curl -X PUT http://admin:1234@localhost:5984/test
 </pre>
 
 <p>
 After running the above command,
 run the following to verify 
-that a database named <em>x</em> was created.
+that a database named <em>test</em> was created.
 </p>
 
 <pre>
-curl -X GET http://root:1234@localhost:5984/_all_dbs
+curl -X GET http://admin:1234@localhost:5984/_all_dbs
 </pre>
 
 <p>
 The above command returns an array of names 
 of the databases hosted by the server.
+Observe that <em>test</em> is in the list.
 </p>
 
 <p>
-Run the following to delete database <em>x</em>.
+Run the following to delete database <em>test</em>.
 </p>
 
 <pre>
-curl -X DELETE http://admin:1234@localhost:5984/x
+curl -X DELETE http://admin:1234@localhost:5984/test
 </pre>
 
-<h3>Database Documents</h3>
+<h3>Insert a Security Object</h3>
+
+<p>
+We already learned about the concept of a server admin user.
+There are also database member users and database admin users.
+Databse member users can read and write documents in the database,
+but can not write design documents.
+Database admin users can read and write all docuemnts.
+Design documents provide additional capabilities beyond key-value store
+operations, such as providing a means to query the data.
+However, we will not cover design documents in this course.
+</p>
+
+<p>
+The member and admin users for a database are specified
+in a database security object.
+If no users are specified in the security object in a database,
+then non-authenticated clients can access the database.
+To avoid this,
+we will insert a secrity object 
+that enables access by only our existing server admin user.
+</p>
+
+<p>
+Use what you learned in the previous section
+to create a database named <em>test</em>.
+</p>
+
+<p>
+After creating the test database,
+run the following command to 
+verify that we can access information about it.
+</p>
+
+<pre>
+curl -X GET http://localhost:5984/test
+</pre>
+
+<p>
+Run the following command to insert a security object
+into the test database that only allows server admin access.
+Note the use of <code>'\'</code> for line continuation.
+</p>
+
+<pre>
+curl -X PUT http://admin:1234@localhost:5984/test/_security  \
+     -H "Content-type: application/json"                     \
+     -d '{"members":{"names":["admin"]}}'
+</pre>
+
+<p class="csusbdt-callout">
+On Windows, use '%' instead of '\' for line continuation.
+</p>
+
+<p>
+Now, verify that we can no longer access the test database
+without specifying the server admin credentials.
+</p>
+
+<pre>
+curl -X GET http://localhost:5984/test
+</pre>
+
+<p>
+From this point on,
+we need to provide the username and password
+of the server admin user
+in the HTTP request as shown in the following.
+</p>
+
+<pre>
+curl -X GET http://admin:1234@localhost:5984/test
+</pre>
+
+<h3>Insert Database Documents</h3>
 
 <p>
 In this section,
@@ -212,7 +307,7 @@ verify that the test database contains no documents.
 </p>
 
 <pre>
-curl -X GET http://localhost:5984/test/_all_docs
+curl -X GET http://admin:1234@localhost:5984/test/_all_docs
 </pre>
 
 <p>
@@ -266,12 +361,14 @@ Note that the value for the <code>-d</code> argument needs to be quoted.
 </p>
 
 <pre>
-curl -X POST http://localhost:5984/test -H "Content-type: application/json" -d '{"_id":"a","x":1}'
+curl -X POST http://admin:1234@localhost:5984/test  \
+     -H "Content-type: application/json"            \
+     -d '{"_id":"a","x":1}'
 </pre>
 
 <p>
 Use the following command to 
-verify that the test database contains contains the document.
+verify that the test database contains the document.
 </p>
 
 <pre>
@@ -283,54 +380,10 @@ Insert JSON representations of the following additional Javascript objects.
 </p>
 
 <pre>
-{ _id: 'b', x: 1 }
-{ _id: 'c', x: 2 }
-{ _id: 'd', y: 1 }
+{ _id: 'b', x: 2 }
+{ _id: 'c', y: 1 }
 </pre>
 
-<h3>Database Access Control</h3>
-
-<p>
-We already learned about the concept of a server admin user.
-There are also database admin users and database member users.
-The admin and member users for a database are specified
-in a database security object.
-If there is no security object in a database,
-then non-authenticated clients can access the database.
-If a security object is inserted into the database,
-then only authenticated clients can access the database.
-</p>
-
-<p>
-Run the following command to insert an empty security object
-in the test database.
-After doing this, 
-access to the database can only be accomplished through our
-server admin credentials.
-</p>
-
-<pre>
-curl -X PUT http://admin:1234@localhost:5984/test/_security -H "Content-type: application/json" -d '{}'
-</pre>
-
-<p>
-After running the above command,
-test that we can no longer access the test database.
-</p>
-
-<pre>
-curl -X GET http://localhost:5984/test/a
-</pre>
-
-<p>
-From this point on,
-we need to provide the username and password
-in the HTTP request as shown in the following.
-</p>
-
-<pre>
-curl -X GET http://admin:1234@localhost:5984/test/a
-</pre>
 
 <h3>Database Creation Script</h3>
 
@@ -342,7 +395,7 @@ This allows you to test for specific functionality that you may be in the
 process of developing.
 It also allows you to easily delete old data that may not be consistent with
 recent changes to application logic.
-Create a script file named <code>createdb.bat</code> (if on Windows) or
+Create a script file named <em>createdb.bat</em> (if on Windows) or
 <em>createdb.sh</em> (if on OS X or Linux) that deletes the test database
 and then recreates it with the empty security object and example documents
 used in this assignment.
@@ -357,27 +410,29 @@ Let's see how to do this.
 </p>
 
 <p>
-Create a file named <em>e.json</em> with the following contents.
+Create a file named <em>d.json</em> with the following contents.
 </p>
 
 <pre>
-{ "_id": "e", "y": 3 }
+{ "_id": "d", "y": 8 }
 </pre>
 
 <p>
 Modify your database creation script
-to insert the contents of <em>e.json</em>
+to insert the contents of <em>d.json</em>
 into the database.
 Do this with the following command.
 </p>
 
 <pre>
-curl -X POST http://localhost:5984/test -H "Content-type: application/json" -d @e.json
+curl -X POST http://admin:1234@localhost:5984/test  \
+     -H "Content-type: application/json"            \
+     -d @d.json
 </pre>
 
 <p>
 Verify that your script creates a database
-that contains documents with ids <em>a</em> through <em>e</em>,
+that contains documents with ids <em>a</em> through <em>d</em>,
 and that access to the database is restricted to the server admin user.
 </p>
 
