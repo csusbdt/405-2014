@@ -26,8 +26,29 @@ provide simple key-value functionality.
 
 <p>
 A key-value datastore is a map that associates keys with values.
-In the case of CouchDB,
-the key is a string and the value is a JSON string.
+In CouchDB, the keys are strings and the values are JSON 
+documents, which are also strings.
+Because JSON strings represent objects in Javascript
+and other languages,
+you can think of a key-value store as an object store.
+If you know the key for an object,
+you can easily look up the object.
+Key-value stores give you the following basic operations,
+expressed in pseudo code.
+</p>
+
+<pre>
+value get(key)
+void  put(key, value)
+void  delete(key)
+</pre>
+
+<p>
+Compared to relational databases,
+key-value stores are simple and fast,
+but it is more difficult to query the data
+to answer questions such as 
+<em>how many customers spent more than 30 dollars?</em>
 </p>
 
 <p>

@@ -1,0 +1,113 @@
+---
+layout: assignment
+title: PostreSQL Assignment
+---
+
+<div class="csusbdt-video-btn">
+  <a class="btn btn-default" role="button" href="#">No Video</a>
+</div>
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment 
+is to learn a little about relational databases
+and how to use a relational database 
+called <a href="http://www.postgresql.org/">PostqreSQL</a>.
+</p>
+
+<p class="csusbdt-callout">
+<a href="http://www.postgresql.org/files/postgresql.mp3">How to pronounce PostgreSQL?</a>
+</p>
+
+<p>
+This assignment requires research and self-study.
+If you get to this assignment early enough,
+I can help you solve some of the problems you encounter.
+</p>
+
+<p>
+Find and do a tutorial to learn the basics
+of SQL using the PostgreSQL database.
+The tutorial in 
+<a href="http://www.postgresql.org/docs/9.3/static/index.html">the
+PostgreSQL documentation</a>
+may be sufficient.
+</p>
+
+<!--
+<p>
+Starting postresql in the labs:
+http://www.postgresql.org/docs/8.1/static/postmaster-start.html
+</p>
+-->
+
+<h2>Assignment Folder</h2>
+
+<p>
+Create a directory named <em>psql</em> 
+for the work you do for this assignment. 
+Start this assignment by making a copy of
+your solution to the gift assignment.
+</p>
+
+<h2>Reading</h2>
+
+<p>
+You will need to become familiar with the SQL language and 
+<a href="http://www.postgresql.org/docs/9.3/static/index.html">the
+PostgreSQL documentation</a>.
+Don't get absorbed with learning the advanced features of SQL;
+the following are the SQL operations I believe you will need to use.
+</p>
+
+<ul>
+<li>create a database</li>
+<li>delete a database</li>
+<li>create a table</li>
+<li>insert a new row in a table</li>
+<li>get a row of data using a primary key</li>
+<li>update a row in a table based on a primary key</li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+Install PostgreSQL and start it. 
+</p>
+
+<p>
+There are 2 ways you should interact with the database:
+</p>
+
+<ul>
+<li>From the command line client <code>psql</code>.</li>
+<li>Through <a href="https://npmjs.org/package/pg">a PostreSQL driver written for Node.js</a>.</li>
+</ul>
+
+<p>
+You should become familiar with the command line client
+because you will use it for debugging and for
+writing a database creation script.
+You should write a script 
+that creates a database called <em>gift</em>
+and populate it with the same data used to test the code
+you developed for the gift application.
+</p>
+
+<p>
+Unlike CouchDB, you'll need to use 
+<a href="https://npmjs.org/package/pg">a driver written for Node.js</a> 
+in order to interact with the PostgreSQL database.
+You should use the client pooling feature 
+of the driver rather than open and close
+a connection with each access to the database.
+</p>
+
+<p>
+To complete this assignment,
+I believe that you only need to modify 
+the database creation script and
+the <code>db</code> module defined in <em>db.js</em>.
+</p>
+
