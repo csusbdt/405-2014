@@ -9,9 +9,10 @@ title: Read Assignment
 The purpose of this assignment is 
 to learn how to read documents from a CouchDB database 
 from inside a Node.js program.  
-This assignment will also give you experience accessing 
+This will also give you experience accessing 
 remote services using HTTP.
-Such services are sometimes referred to as <em>Web services</em>.
+Such services are sometimes referred to as <em>Web services</em>
+and are very common in software systems these days.
 </p>
 
 <p>
@@ -20,15 +21,18 @@ In the ajax assignment,
 we created a Web page that uses ajax 
 to request a message string from the server, 
 which it displays to the user. 
-In the ajax assignment, the message string 
+However, the message string 
 was hard-coded into the program. 
-In this assignment, we will retrieve the message string from the database.  
+In this assignment, we will 
+use what we learned in the couch assignment
+to retrieve the message string 
+from a CouchDB database.
 </p>
 
-<h2>Assignment folder</h2>
+<h2>Assignment Folder</h2>
 
 <p>
-Create a directory named <em>couch</em> 
+Create a directory named <em>read</em> 
 for the work you do for this assignment. 
 At the end of the assignment, 
 this folder will contain the following files.
@@ -38,9 +42,9 @@ this folder will contain the following files.
 <li>README.md</li>
 <li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
 <li>security.json</li>
-<li>design.json</li>
 <li>message.js</li>
 <li>root.js</li>
+<li>image.js</li>
 <li>db.js</li>
 <li>main.js</li>
 <li>response.js</li>
@@ -49,8 +53,10 @@ this folder will contain the following files.
 <h2>Reading</h2>
 
 <ul>
-<li>Read relevant parts of the CouchDB documentation.</li>
-<li>Read the Node.js documentation on HTTP client.</li>
+<li>Read the Node.js documentation related to making HTTP requests,
+    starting from  
+    <a href="http://nodejs.org/api/http.html#http_http_request_options_callback">http.request</a>.
+</li>
 </ul>
 
 <h2>Instructions</h2>

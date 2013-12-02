@@ -146,7 +146,7 @@ there are no database users,
 so the Couch server runs every operation submitted to it.
 To close this security hole,
 we will define a server admin user,
-which is a user who can operate on databaes.
+which is a user who can operate on databases.
 We will use the following abilities that 
 con only be performed by 
 a server admin user.
@@ -291,6 +291,26 @@ in the HTTP request as shown in the following.
 curl -X GET http://admin:1234@localhost:5984/test
 </pre>
 
+<p>
+The commands illustrated in this assignment 
+rely on unencrypted HTTP.
+In a real world application,
+you would need to use encrypted HTTPS,
+otherwise your server admin username and password
+could be intercepted by a maliscious user.
+Configuring CouchDB to support HTTPS requires some work,
+which this course does not go into.
+</p>
+
+<p>
+If you are not replicating data across the public network
+and the connection between your Web applciation server and CouchDB server
+is through the localhost or a private network,
+you can turn off authentication and use HTTP to reduce overhead.
+If you do this, make sure that oly your Web server can reach the
+port CouchDB is listening to.
+</p>
+
 <h3>Insert Database Documents</h3>
 
 <p>
@@ -385,7 +405,7 @@ Insert JSON representations of the following additional Javascript objects.
 </pre>
 
 
-<h3>Database Creation Script</h3>
+<h3>Write a Database Creation Script</h3>
 
 <p>
 When developing an application that relies on a database,
@@ -436,6 +456,7 @@ that contains documents with ids <em>a</em> through <em>d</em>,
 and that access to the database is restricted to the server admin user.
 </p>
 
+<!--
 <span class="text-muted" style="visibility: hidden">
 
 <h2>OPTIONAL MATERIAL STARTS HERE</h2>
@@ -620,5 +641,5 @@ call the log function inside the map and reduce functions.
 </p>
 
 </span>
-
+-->
 
