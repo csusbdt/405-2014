@@ -56,7 +56,7 @@ because they are changing.
 In this case, we would include cache controlling headers 
 to the request URL to ensure 
 that the resource is never delivered from cache storage.
-To guard against agressive caches that might ignore these headers,
+To guard against aggressive caches that might ignore these headers,
 one can add a random string to the request URL
 so that the cache sees repeated requests as distinct.
 </p>
@@ -96,7 +96,7 @@ for objects they return to requesting clients.
 The ETag header contains a string 
 that identifies the version of the object being returned.
 In this section,
-you will perfom experiments with curl
+you will perform experiments with curl
 to get a better understanding of how ETags work.
 </p>
 
@@ -281,7 +281,7 @@ replyNotModified = function(res) {
 <p>
 If in your code <code>etag</code> represents the ETag
 for <em>app.html</em>,
-than the following code makes this check and passes
+then the following code makes this check and passes
 control to replyNotModified if the browser's stored ETag matches 
 the current ETag.
 </p>

@@ -4,7 +4,7 @@ title: CouchDB Assignment
 ---
 
 <div class="csusbdt-video-btn">
-  <a class="btn btn-success" role="button" target="_blank" href="">Video</a>
+  <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/lU6yzydlJaQ">Video</a>
 </div>
 
 <h2>Overview</h2>
@@ -70,7 +70,7 @@ handled by application code.
 We will not cover these topics any further in this course.
 However, I'm interested in this problem,
 so let me know if you want to 
-do an independant study or master's project in this area.
+do an independent study or master's project in this area.
 </p>
 
 <p>
@@ -222,9 +222,9 @@ curl -X DELETE http://admin:1234@localhost:5984/test
 <p>
 We already learned about the concept of a server admin user.
 There are also database member users and database admin users.
-Databse member users can read and write documents in the database,
+Database member users can read and write documents in the database,
 but can not write design documents.
-Database admin users can read and write all docuemnts.
+Database admin users can read and write all documents.
 Design documents provide additional capabilities beyond key-value store
 operations, such as providing a means to query the data.
 However, we will not cover design documents in this course.
@@ -236,7 +236,7 @@ in a database security object.
 If no users are specified in the security object in a database,
 then non-authenticated clients can access the database.
 To avoid this,
-we will insert a secrity object 
+we will insert a security object 
 that enables access by only our existing server admin user.
 </p>
 
@@ -268,7 +268,7 @@ curl -X PUT http://admin:1234@localhost:5984/test/_security  \
 </pre>
 
 <p class="csusbdt-callout">
-On Windows, use '%' instead of '\' for line continuation.
+On Windows, use '^' instead of '\' for line continuation.
 </p>
 
 <p>
@@ -297,17 +297,17 @@ rely on unencrypted HTTP.
 In a real world application,
 you would need to use encrypted HTTPS,
 otherwise your server admin username and password
-could be intercepted by a maliscious user.
+could be intercepted by a malicious user.
 Configuring CouchDB to support HTTPS requires some work,
 which this course does not go into.
 </p>
 
 <p>
 If you are not replicating data across the public network
-and the connection between your Web applciation server and CouchDB server
+and the connection between your Web application server and CouchDB server
 is through the localhost or a private network,
 you can turn off authentication and use HTTP to reduce overhead.
-If you do this, make sure that oly your Web server can reach the
+If you do this, make sure that only your Web server can reach the
 port CouchDB is listening to.
 </p>
 
