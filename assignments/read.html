@@ -44,13 +44,14 @@ this folder will contain the following files.
 
 <ul>
 <li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
+<li>test_update.bat (if on Windows) or test_update.sh (if on OS X or Linux)</li>
 <li>security.json</li>
 <li>message.js</li>
 <li>root.js</li>
 <li>image.js</li>
-<li>db.js</li>
 <li>main.js</li>
 <li>response.js</li>
+<li>db.js</li>
 </ul>
 
 <h2>Reading</h2>
@@ -69,6 +70,9 @@ this folder will contain the following files.
 <p>
 Copy your app server code from the cache assignment 
 to the <em>read</em> folder as a starting point.
+</p>
+
+<p>
 Test that the application is working correctly by visiting 
 <a href="http://localhost:5000/">http://localhost:5000/</a> 
 in a browser.
@@ -77,18 +81,24 @@ in a browser.
 <h3>Create Database</h3>
 
 <p>
-Start your CouchDB server.
+Start your CouchDB server if not already started.
 </p>
 
 <p>
 Use what you learned from the CouchDB assignment 
-to create file <em>createdb.sh</em> 
-that contains commands to create a database called <em>read</em>.
-The create script should insert a document with a property named <em>msg</em>.
+to modify the file <em>createdb.sh</em> 
+to create a database called <em>read</em>
+and insert a single document into this database
+with a property named <em>msg</em>.
 This property should be set to the string "the read assignment".
 Also, specify the value <em>message</em> for the <code>_id</code> 
 field so that we can identify
 this document in a straightforward way.
+</p>
+
+<p>
+Modify <em>test_update.sh</em> so that it changes
+the message in the database.
 </p>
 
 <h3>Create Database Interaction Module</h3>
@@ -112,13 +122,13 @@ exports.getMsg = function(cb) {
       hostname: 'localhost',
       auth: 'admin:1234',
       port: 5984,
-      path: '/read/msg', 
+      path: '/read/message', 
       method: 'GET'
   };
   send(options, function(err, data) {   
     if (err) {                 
       console.log(err.message);         
-      cb(err);                         
+      return cb(err);                         
     }
     if (data.msg === undefined) {
       throw new Error(
@@ -201,10 +211,11 @@ and the server code runs without error.
 
 <p>
 Second, while our server is running,
-modify the database creation script to insert a 
+run <em>test_update.sh</em> to set a 
 different message.
-Then refresh the Web page and observe that the new
-message is displayed to the user.
+Then click on the <em>make a request</em> link
+to see that the new message
+is displayed to the user.
 Do this test without restarting the Web application server.
 </p>
 

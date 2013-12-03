@@ -109,6 +109,7 @@ this folder will contain the following files.
 <ul>
 <li>d.json</li>
 <li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
+<li>test_update.bat (if on Windows) or test_update.sh (if on OS X or Linux)</li>
 </ul>
 
 <h2>Instructions</h2>
@@ -148,7 +149,7 @@ To close this security hole,
 we will define a server admin user,
 which is a user who can operate on databases.
 We will use the following abilities that 
-con only be performed by 
+can only be performed by 
 a server admin user.
 </p>
 
@@ -454,6 +455,68 @@ curl -X POST http://admin:1234@localhost:5984/test  \
 Verify that your script creates a database
 that contains documents with ids <em>a</em> through <em>d</em>,
 and that access to the database is restricted to the server admin user.
+</p>
+
+<h3>Test Update</h3>
+
+<p class="csusbdt-callout">
+This section is not discussed in the video
+but is needed for later assignments.
+</p>
+
+<p>
+CouchDB maintains a revision string in the JSON documents it stores.
+The revision string enables the database server to detect conflicting writes.
+</p>
+
+<p>
+Updating a document in CouchDB involves replacing the existing document with a new one.
+This operation requires that a revision string be provided,
+so that the CouchDB server knows which version of the document you are trying to replace.
+If the document has been updated by another process since you acquired the revision string,
+then your revision string will not match the current revision string
+and the update will fail.
+</p>
+
+<p>
+In this section, you will write a script that updates a document in the database.
+</p>
+
+<p>
+Run the database creation script
+and observe that the revision string for the document under id <em>a</em>
+is the following.
+</p>
+
+<pre>
+"1-0785e9eb543380151003dc452c3a001a"
+</pre>
+
+<p>
+Create a script named test_update.sh (or .bat if on Windows)
+that includes the following commands.
+</p>
+
+<pre>
+echo Update document a.
+curl -X PUT http://admin:1234@localhost:5984/test/a                        \
+     -H "Content-type: application/json"                                   \
+     -d '{"_id":"a","x":100,"_rev":"1-0785e9eb543380151003dc452c3a001a"}'
+echo
+echo Display document a.
+curl -X GET http://admin:1234@localhost:5984/test/a
+echo
+echo Try an update with an old revision number.  Note a conflict.
+curl -X PUT http://admin:1234@localhost:5984/test/a                        \
+     -H "Content-type: application/json"                                   \
+     -d '{"_id":"a","x":999,"_rev":"1-0785e9eb543380151003dc452c3a001a"}'
+echo
+echo Display document a.  Note that x is still 100.
+curl -X GET http://admin:1234@localhost:5984/test/a
+</pre>
+
+<p>
+Run the script and study the output.
 </p>
 
 <!--
