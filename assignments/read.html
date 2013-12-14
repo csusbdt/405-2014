@@ -65,11 +65,15 @@ this folder will contain the following files.
 
 <h2>Instructions</h2>
 
-<h3>Copy Existing Code</h3>
+<h3>Step One: Copy Existing Code</h3>
 
 <p>
 Copy your app server code from the cache assignment 
 to the <em>read</em> folder as a starting point.
+</p>
+
+<p>
+Start your CouchDB server if not already started.
 </p>
 
 <p>
@@ -78,18 +82,156 @@ Test that the application is working correctly by visiting
 in a browser.
 </p>
 
-<h3>Create Database</h3>
+<h3>Step Two: Create Stubs</h3>
 
 <p>
-Start your CouchDB server if not already started.
+In this step we create a partially implemented
+module named <code>db</code> that provides a layer of abstraction
+between the request handlers and the database.
+The <code>db</code> module exports 
+a single function named <code>getMessage</code>.
+We also modify <code>message</code>, 
+the module that handles requests for the message.
+Actual interaction with the database will be done in a later step.
 </p>
+
+<p>
+Create <em>db.js</em> with the following contents.
+</p>
+
+<pre>
+exports.getMessage = function(cb) {
+  cb(null, Math.random() + '');
+};
+</pre>
+
+<p>
+The <code>getMessage</code> function is implemented as a <em>stub</em>
+for this intermediate step of development.
+The purpose of this function is to retrieve a message string
+from the database.
+If for whatever reason there is a problem getting this string,
+the callback function <code>cb</code> is called with 
+an instance of <code>Error</code> as its sole argument.
+If there is no problem, then <code>cb</code> is called
+with <code>null</code> as its first argument and the message string
+as its second argument.
+</p>
+
+<p>
+We use the random number generator to simulate changing message data.
+The <code>random</code> function returns a number,
+which we convert to a string by concatinating with the empty string.
+</p>
+
+<p>
+There is one issue with the stub code for 
+the getMessage function: it invokes the callback immediately.
+When interacting with the database, we will need to invoke
+asynchronous functions,
+which means we will return from <code>getMessage</code> <em>before</em> the callback
+<code>cb</code> is called.
+But our stub code returns from <code>getMessage</code> <em>after</em> 
+the callback <code>cb</code> is called.
+As a result, the stub code might permit logic errors
+that could be caught at this point.
+The following code is an improved version of the stub code.
+</p>
+
+<pre>
+exports.getMessage = function(cb) {
+  setTimeout(function() {
+    cb(null, Math.random() + '');
+  }, 4);
+};
+</pre>
+
+<p>
+The above version of <code>getMessage</code> has the function
+returning before the callback is invoked,
+which is the normal sequence of events with asynchronous functions.
+</p>
+
+<p>
+Another improvement we can make
+is to alternate between returning an error
+and returning a message.
+This will test our error hanlding code.
+The following version of the stub code accomplishes this.
+<p>
+
+<pre>
+var error = false;
+
+exports.getMessage = function(cb) {
+  setTimeout(function() {
+    if (error) cb(new Error('database server error'));
+    else cb(null, Math.random() + '');
+    error = !error;
+  }, 4);
+};
+</pre>
+
+<p>
+With our database code stubbed out,
+we can now make changes to the message request handing code,
+which is in the module <code>message</code>.
+The following code is a rewrite of this
+module so that the <code>getMessage</code> function
+of the <code>db</code> module is used to get the message to return to the client.
+</p>
+
+<pre>
+var http = require('http');
+var db = require('./db');
+
+exports.handle = function(req, res) {
+  db.getMessage(function(err, message) {
+    if (err) {
+      console.log(err.message);
+      res.writeHead(500, 'server error');
+      res.end();
+      return;
+    }
+    var responseObject = { msg: message };
+    var responseString = JSON.stringify(responseObject);
+    var responseBody = new Buffer(responseString, 'utf-8');
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Content-Length': responseBody.length,
+      'Pragma': 'no-cache',
+      'Cache-Control': 'no-cache, no-store'
+    });
+    res.end(responseBody);
+  });
+};
+</pre>
+
+<p>
+Note that we <code>require</code> the <code>db</code> module
+using an absolute pathname <code>'./db'</code>.
+We do this because Nodejs does not search the current directory
+when resolving references to modules.
+</p>
+
+<p>
+Also note that we need to create a <code>Buffer</code> object
+for each request. This is required because
+the message data may change between requests.
+</p>
+
+<p>
+Test your implementation by running the server and testing with a browser.
+</p>
+
+<h3>Step Three: Write Test Database Creation Script</h3>
 
 <p>
 Use what you learned from the CouchDB assignment 
 to modify the file <em>createdb.sh</em> 
 to create a database called <em>read</em>.
 Insert a single document into this database
-with a property named <em>msg</em>.
+with a property named <em>text</em>.
 This property should be set to the string "the read assignment".
 Also, specify the value <em>message</em> for the <code>_id</code> 
 field so that we can identify
@@ -101,13 +243,11 @@ Modify <em>test_update.sh</em> so that it changes
 the message in the database.
 </p>
 
-<h3>Create Database Interaction Module</h3>
+<h3>Step Four: Complete the Database Module</h3>
 
 <p>
-Create file named <code>db.js</code>
+Replace the stub code in <code>db.js</code>
 with the following code.
-This module exposes a <code>getMsg</code> function
-that retrieves the message from the database.
 </p>
 
 <div class="csusbdt-code-title">db.js</div>
@@ -117,46 +257,46 @@ var assert      = require('assert');
 var querystring = require('querystring');
 var http        = require('http');
 
-exports.getMsg = function(cb) {
+exports.getMessage = function(cb) {
   var options = {
       hostname: 'localhost',
       auth: 'admin:1234',
       port: 5984,
-      path: '/read/message', 
+      path: '/read/message',
       method: 'GET'
   };
-  send(options, function(err, data) {   
-    if (err) {                 
-      console.log(err.message);         
-      return cb(err);                         
+  send(options, function(err, data) {
+    if (err) {
+      console.log(err.message);
+      return cb(err);
     }
-    if (data.msg === undefined) {
+    if (data.text === undefined) {
       throw new Error(
-        'msg property missing from msg document.\n' + JSON.stringify(data)
+        'text property missing from msg document.\n' + JSON.stringify(data)
       );
     }
-    cb(null, data.msg);
+    cb(null, data.text);
   });
 };
 
 // Send request and receive data (a Javascript object).
-// options are the same as for http.request
-// cb = function(data) where data is Error or Object
+// The options argument is the same as for http.request.
+// cb = function(err, data)
 function send(options, cb) {
   var req;
-  
+
   // create request
   req = http.request(options, function(res) {
     var dataString;  // to be converted to Javascript object
-    
+
     // tell node how to convert received bytes to a Javascript string
     res.setEncoding('utf8');
-    
+
     // accumulate data
     res.on('data', function (chunk) {
       if (dataString === undefined) dataString = chunk; else dataString += chunk;
     });
-    
+
     // parse received data
     res.on('end', function() {
       var data;
@@ -165,23 +305,21 @@ function send(options, cb) {
       } catch (err) {
         return cb(err);
       }
-      cb(null, data);            
+      cb(null, data);
     });
   });
-  
+
   // register error listener
-  req.on('error', function(err) { 
-    err.message += '\ndb.send: request error';
-    cb(err); 
-  });
-  
+  // pass error directly to callback
+  req.on('error', cb);
+
   // send request
   req.end();
 };
 </pre>
 
 <p>
-The <code>db.getMsg</code> calls the <code>read</code> function,
+The <code>db.getMessage</code> function calls the <code>send</code> function,
 which calls the Node.js <code>request</code> function 
 from the <code>http</code> module.
 The <code>request</code> function returns an instance of <code>ClientRequest</code>.
@@ -189,20 +327,6 @@ This is used to send an HTTP message to the database server.
 So, in this part of our code,
 our Web server plays the role of a Web client.
 </p>
-
-<h3>Modify the Message Request Handler</h3>
-
-<p>
-Now that we have a way to retrieve the message string
-from the database,
-we can modify the message request handler to 
-get the message string this way.
-You should modify the message request handler 
-to retrieve the message string from the database
-using our new <code>db</code> module.
-</p>
-
-<h3>Test</h3>
 
 <p>
 First, test that the browser gets the current message from our server
