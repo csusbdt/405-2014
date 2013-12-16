@@ -17,7 +17,7 @@ and deliver their contents to requesting clients.
 <h2>Assignment folder</h2>
 
 <p>
-Create a directory named <code>file</code> 
+Create a directory named <em>file</em> 
 for the work you do for this assignment. 
 At the end of the assignment, 
 this folder will contain the following files.
@@ -31,28 +31,52 @@ this folder will contain the following files.
 <li>root.js</li>
 </ul>
 
-<h2>Instructions</h2>
+<h2>Step 1</h2>
 
 <p>
-Create a file named <em>app.html</em>. 
-Add HTML content to the file.
+This assignment builds on the work you did for
+<a href="buf.html">the buffers assignment</a>.
+For this reason, start by creating a folder named <em>buf</em>
+for this assignment and then copy the contents of
+the <em>buf</em> folder into it.
 </p>
 
 <p>
-Our strategy will be to read app.html into a buffer 
-when he server starts. 
-When browsers send a request for <code>/</code>, 
-we return the contents of the buffer.
+Verify that the code you copied into the
+<em>buf</em> folder runs.
+</p>
+
+<h2>Step 2</h2>
+
+<p>
+Create a file named <em>app.html</em>
+and add some simple HTML to it.
+You will write code that reads the contents
+of this file when the server starts,
+and return this data to browsers that submit
+requests for the root path <code>/</code>.
 </p>
 
 <p>
-Copy main.js from <a href="buf.html">the buffers assignment</a>. 
-Use the code I provided in the Web page,
-not the code that you submitted for the assignment.
+Our strategy will be to read the file <em>app.html</em> 
+into a buffer when the server starts,
+and return the contents of the buffer 
+for each request sent by browsers the root path <code>/</code>.
+This procedure is more efficient than
+reading the file from the file system for each request;
+however, it requires us to restart the server
+to test changes to file.
 </p>
 
 <p>
-Create file root.js with the following contents.
+Replace the contents of file <em>root.js</em> 
+with the following.
+This code uses the <code>readFile</code> method of the
+<code>fs</code> module to read the contents of <em>app.html</em>
+into an instance of <code>Buffer</code>.
+This is done in a function named <code>init</code>.
+This function must be called from the main module
+when the server starts.
 </p>
 
 <pre>
@@ -78,14 +102,22 @@ exports.init = function(cb) {
 </pre>
 
 <p>
-Modify main.js so that it calls the exported init function 
+Modify <em>main.js</em> so that it calls the exported init function 
 in the root module <em>before</em> the server starts listening to port 5000. 
 To accomplish this, you need to run the command 
-to listen to port 5000 inside the callback function that you pass into <code>init</code>.
+to listen to port 5000 inside a callback function that you pass into <code>init</code>.
 </p>
 
 <p>
 Run and test with browser.
+</p>
+
+<h2>Step 3</h2>
+
+<p>
+You need to create a test image in png format 
+for this part of the assignment.
+Call the image <em>image.png</em>. 
 </p>
 
 <p>
@@ -93,7 +125,7 @@ Add an <code>img</code> element to your web page
 that loads an image named <em>image.png</em> from your server. 
 There are many ways to return the image from the server, 
 but for this assignment you should create a module 
-similar to root.js that does the job. 
+similar to <em>root.js</em> that does the job. 
 Call the module file <em>image.js</em>.
 </p>
 
@@ -103,18 +135,21 @@ the init function of
 the <code>root</code> and <code>image</code> modules
 both complete before the <code>main</code> module
 starts to listen for connections.
+You should review <a href="cb">the callbacks assignment</a>
+to help you solve this problem.
+The server will start faster if the <code>init</code>
+functions of the <code>root</code> and <code>image</code>
+modules run in parallel.
 </p>
 
 <p>
 You'll need to set the <code>Content-Type</code> 
 appropriately for the image data that you return.
 For example, if the image is a png file, 
-then the content type
-is <code>image/png</code>; if it's a jpg file,
-the content type is <code>image/jpeg</code>.
+then the content type is <code>image/png</code>.
 </p>
 
 <p>
-Run and test with browser.
+Run and test with a browser.
 </p>
 
