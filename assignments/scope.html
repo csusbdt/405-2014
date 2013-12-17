@@ -132,7 +132,7 @@ console.log(process.env.x);
 </pre>
 
 <p>
-Now run the code with the environmental variable <code>x</code> set to 3.
+Now run the code with the environmental variable <code>x</code> set to "Hello there.".
 </p>
 
 <pre>
@@ -158,7 +158,7 @@ If you have many variables to set,
 you can use a shell script to run the program
 and set each variable on it's own line 
 using the system's line continuation character.
-As an example, suppose we wanted to run process-2.js 
+As an example, suppose we wanted to run process.js 
 with values set for variables 
 <code>x</code>, <code>y</code>, <code>z</code>.
 Under OS X and Windows, create a file named <em>run.sh</em>
@@ -414,7 +414,9 @@ In Javascript, you can control the visibility of data using closures.
 
 <p>
 Rewrite all the Node.js examples in this assignment
+except <em>process.js</em>
 to follow the pattern presented in 
 <a href="assert.html">the assert assignment</a>.
 The programs should simply print <em>All tests passed</em> when they run.
+Use strict equality <code>===</code> in your assert statements.
 </p>

@@ -135,11 +135,13 @@ the init function of
 the <code>root</code> and <code>image</code> modules
 both complete before the <code>main</code> module
 starts to listen for connections.
-You should review <a href="cb">the callbacks assignment</a>
-to help you solve this problem.
 The server will start faster if the <code>init</code>
 functions of the <code>root</code> and <code>image</code>
 modules run in parallel.
+For this reason, make sure that these 2 asynchronous functions 
+run in parallel.
+You should review <a href="cb">the callbacks assignment</a>
+to help you solve this problem.
 </p>
 
 <p>
