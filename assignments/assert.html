@@ -7,6 +7,14 @@ title: Assert Assignment
   <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/vbIEy-R4k-w">Video</a>
 </div>
 
+<h2>Note</h2>
+
+<p class="csusbdt-callout">
+I removed the exercise on prototypes from this assignment.
+If you view the video,
+you can stop at the point when I start to talk about Javascript prototypes.
+</p>
+
 <h2>Overview</h2>
 
 <p>
@@ -264,39 +272,5 @@ Structure <em>exceptions.js</em> so that it does not display failure messages wh
 
 <p class="csusbdt-callout">
 <code>Error</code> is a constructor function that is part of the Javascript language.
-</p>
-
-<h2>prototypes.js</h2>
-
-<p>
-Read <a href="http://javascriptweblog.wordpress.com/2010/06/07/understanding-javascript-prototypes/">Understanding JavaScript Prototypes</a>
-and develop assertions that validate or invalidate the author's statements.
-Put your code into a file named <em>prototypes.js</em>.
-The following is how you should get started. 
-The commented lines are taken from the article.
-</p>
-
-<pre>
-var assert = require('assert').ok;
-
-var a = {};
-
-// Object.getPrototypeOf(a); //[object Object]
-assert(typeof Object.getPrototypeOf(a) === 'object');
-
-// a.__proto__; //[object Object]
-assert(Object.getPrototypeOf(a) === a.__proto__);
-
-// a.constructor.prototype; //[object Object]
-// ...
-
-// ...
-</pre>
-
-<p class="csusbdt-callout">
-My memory is that the author's presentation contains one error.
-He may have fixed this already; I don't know.
-If you find an error in the author's statements,
-indicate this in a comment in your program.
 </p>
 
