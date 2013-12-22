@@ -210,16 +210,23 @@ In the table LHS is left-hand side and RHS is right-hand side of the equality op
 Create a program in a file named <em>equality.js</em> that contains assertions that
 demonstrate the type-coercing and non-type-coercing equality 
 between each pair of expressions in the table.
-For example, your program would start as follows.
+Your program would start as follows
+and continue to include 2 assertions for each row in the table.
 </p>
 
 <pre>
 var assert = require('assert').ok;
 
+// compare 0 and false
 assert(0 == false);
 assert(0 !== false);
-assert(1 == true);
 
+// compare 1 and true
+assert(1 == true);
+assert(1 !== true);
+
+// compare 3 and true
+// ...
 // ...
 </pre>
 
