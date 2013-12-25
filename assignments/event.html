@@ -31,10 +31,12 @@ When you complete this assignment, the contents of this folder will be the follo
 
 <ul>
 <li>README.md</li>
+<li>test_event.js</li>
+<li>main_domain.js</li>
 <li>main.js</li>
 </ul>
 
-<h2>Instructions</h2>
+<h2>EventEmitter</h2>
 
 <p>
 In Node.js, objects that emit events are 
@@ -52,11 +54,19 @@ console.log(server instanceof EventEmitter);
 </pre>
 
 <p>
-The above code doesn't do anything other than verify 
-that the created HTTP server object 
-inherits all the functions in the EventEmitter's prototype object. 
+Place the above code in a file named <em>test_instanceof.js</em>
+and run and test that it prints true.
+Modify the code so that it
+follows the pattern presented in 
+<a href="assert.html">the assert assignment</a>.
+The program should simply print <em>All tests passed</em> when it runs.
+Use strict equality <code>===</code> in your assert statements.
+</p>
+
+<p>
 The next bit of code shows 
-how to register an event listener function with the server.
+how to register an event listener function with a server object
+created by <code>http.createServer()</code>.
 </p>
 
 <pre>
@@ -70,15 +80,18 @@ server.on('request', requestListener);
 
 <p>
 The first argument in the <code>on</code> function 
-in the above code is the name of an event 
+is the name of an event 
 and the second argument is a reference 
 to a function that is called when the event occurs. 
-In our case, the event we listen for is called <code>request</code>. 
-The request event occurs when a browser makes a TCP connection 
+In our case, the event we listen for is called <code>request</code>,
+which occurs when a browser makes a TCP connection 
 to the port the server is listening to 
 and sends an HTTP request message. 
+</p>
+
+<p>
 The request event listener function takes 2 arguments: 
-a request object and a response object. 
+a request object <code>req</code> and a response object <code>res</code>. 
 The request object is used to read the HTTP message data sent by the browser
 and the request object is used to construct 
 and send an HTTP response message back to the browser.
@@ -95,20 +108,59 @@ server.listen(5000);
 </pre>
 
 <p>
-Assemble the above code snippets into a complete server. 
-Run the server and go to 
+Assemble the above code snippets into a complete server.
+Place the code in a file named <code>main.js</code>.
+Do not include the assertion that <code>server</code> 
+is an instance of <code>EventEmitter</code>.
+Run the code and go to 
 <a href="http://localhost:5000">http://localhost:5000</a> 
 with a browser to test.
 </p>
 
 <p>
 Your browser may send 2 requests, 
-one for / and the other for favicon.ico. 
-Later, we will return a <em>not found</em> 
-response to the browser for requests to the favicon file. 
+one for <em>/</em> and the other for <em>/favicon.ico</em>. 
 The favicon file is used by browsers as a graphical icon to represent the site,
 and it is probably important for a commercial website.
+However, to keep our examples simple,
+we will ignore these requests in this course.
 </p>
+
+<p>
+Replace your request handling function
+with the following code.
+</p>
+
+<pre>
+function requestListener(req, res) {
+  console.log('Handling request for ' + req.url);
+  if (req.url === '/') {
+    res.end('hello');
+  } else {
+    res.writeHead(404);
+    res.end('Not found.');
+  }
+}
+</pre>
+
+<p>
+The above code returns the hello string only for requests for the root resource,
+which is named by a single slash in the url component of the HTTP request message.
+For all other requests, the code returns a machine readable status code of 
+<code>404</code> and a human readable message <em>not found</em> in the body of the
+response message.
+</p>
+
+<p>
+Note that the default status code that Node.js will return is <code>200</code>.
+That's the reason we didn't specify this when returning the hello string.
+We could have written the code as follows to be more explicit.
+</p>
+
+<pre>
+res.writeHead(200);
+res.end('hello');
+</pre>
 
 <h2>Anonymous functions</h2>
 
@@ -136,7 +188,13 @@ written with an anonymous function as follows.
 <pre>
 server.on('request', function (req, res) {
   console.log('Handling request for ' + req.url);
-  res.end('hello');
+  if (req.url === '/') {
+    res.writeHead(200);
+    res.end('hello');
+  } else {
+    res.writeHead(404);
+    res.end('Not found.');
+  }
 });
 </pre>
 
@@ -144,6 +202,11 @@ server.on('request', function (req, res) {
 The definition of the function that was formerly named <code>requestListener</code> 
 is passed directly as an argument to the <code>on</code> function 
 without the need of assigning a name to it.
+</p>
+
+<p>
+Modify your code so that your request handler
+is passed into the <code>on</code> function as an anonymous function.
 </p>
 
 <h2>Error handling</h2>
@@ -182,8 +245,12 @@ function replyError(res) {
 
 function handleRequest(req, res) {
   console.log('Handling request for ' + req.url);
-  if (Math.random() > .5) throw new Error("I'm bad.");
-  res.end('hello');
+  if (req.url === '/') {
+   res.end('hello');
+  } else {
+    res.writeHead(404);
+    res.end('Not found.');
+  } 
 }
 
 var server = http.createServer();
@@ -208,20 +275,55 @@ in order to avoid halting the server.
 </p>
 
 <p>
-In the README.md file, explain what the following line of code does 
-in the example given above.
+Replace <em>main.js</em> with the 
+above version of the server code and test that it runs correctly.
+</p>
+
+<p>
+At this point,
+we have only verified that the server works correctly when there
+is not error.
+We will now create a test to see that our
+error catching code works by artificially throwing an error
+for every other request for the root resource.
+Start by making a copy of <em>main.js</em>;
+call the new file <em>test_domain.js</em>.
+</p>
+
+<p>
+In <em>test_domain.js</em>, declare a variable
+that we will use to toggle between throwing and not throwing an error.
 </p>
 
 <pre>
-if (Math.random() > .5) throw new Error("I'm bad.");
+var throwError = true;
 </pre>
 
 <p>
-Place the error handling server code in <em>main.js</em>
-and modify it
-so that a response code of 200 is
-returned to the client when there is an error.
-Also, have the server send the message "Please try again later."
-Finally, increase the probability that an error occurs to 75%.
+Use the following code as a guide on how to
+throw an error for every other request 
+for the root resource.
 </p>
- 
+
+<pre>
+if (req.url === '/') {
+  throwError = !throwError;
+  if (throwError) throw new Error("I'm bad.");
+...
+</pre>
+
+<p>
+Run <em>test_domain.js</em> and verify that the
+server toggles between returning a normal response
+and an error response.
+Do this be clicking the browser's refresh button.
+</p>
+
+<h2>Refactor</h2>
+
+<p>
+Simplify <code>handleRequest</code> by moving the 
+404 response code into a function named <code>replyNotFound</code>. 
+Use the implementation of <code>replyError</code> as a model.
+</p>
+
