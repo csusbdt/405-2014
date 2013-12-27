@@ -113,6 +113,11 @@ Run and test with browser.
 <h2>Step 3</h2>
 
 <p>
+This part of the assignment includes substantially more work
+than the previous parts and so will require more time to complete.
+</p>
+
+<p>
 You need to create a test image in png format 
 for this part of the assignment.
 Call the image <em>image.png</em>. 
@@ -121,32 +126,36 @@ Call the image <em>image.png</em>.
 <p>
 Add an <code>img</code> element to your web page 
 that loads an image named <em>image.png</em> from your server. 
+</p>
+
+<p>
 There are many ways to return the image from the server, 
 but for this assignment you should create a module 
-similar to <em>root.js</em> that does the job. 
+similar to <em>root.js</em> that does the job.
 Call the module file <em>image.js</em>.
+In addition to creating the image module,
+you will need to modify the main module to call the <code>handle</code>
+function of the image module when the <code>url</code>
+of the request object equals <em>/image.png</em>.
 </p>
 
 <p>
-Write the code so that the activities started by 
-the init function of 
-the <code>root</code> and <code>image</code> modules
-both complete before the <code>main</code> module
-starts to listen for connections.
-The server will start faster if the <code>init</code>
-functions of the <code>root</code> and <code>image</code>
-modules run in parallel.
-For this reason, make sure that these 2 asynchronous functions 
-run in parallel.
-You should review <a href="cb">the callbacks assignment</a>
+When you send your image data to the client,
+set the <em>Content-Type</em> to <em>image/png</em>.
+</p>
+
+<p>
+Similar to the root module, the image module will have an init function
+that reads file contents into memory when the server starts.
+Add code to the main module so that the 
+init functions of the root and image modules run in parrallel.
+Also, make sure that you do not start listenning to connection requests
+until both init function complete.
+You should review the parallel code you developed
+for <a href="cb">the callbacks assignment</a>
 to help you solve this problem.
-</p>
-
-<p>
-You'll need to set the <code>Content-Type</code> 
-appropriately for the image data that you return.
-For example, if the image is a png file, 
-then the content type is <code>image/png</code>.
+By running the init functions in parallel,
+your server will be ready to process requests as earlier as possible.
 </p>
 
 <p>
