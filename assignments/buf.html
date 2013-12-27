@@ -10,11 +10,18 @@ title: Buffers Assignment
 <h2>Overview</h2>
 
 <p>
-The purpose of this assignment is to continue developing a Web application, 
-this time adding a content-type header to the response sent from the server to the browser. 
-We make use of 
-<a href="http://nodejs.org/api/all.html#all_buffer">Node.js buffers</a>
-to ensure that the character data is sent in the correct encoding.
+The purpose of this assignment is to learn
+how to use the Node.js <code>Buffer</code> class
+to work with chunks of raw data.
+In this assignment, we create an instance of <code>Buffer</code>
+to hold the data for a string that is defined in code.
+In later assignments, the contents of buffers will come from files.
+</p>
+
+<p>
+To better understand this assignment,
+you should read
+<a href="http://nodejs.org/api/all.html#all_buffer">the Node.js documentation on buffers</a>.
 </p>
 
 <h2>Assignment folder</h2>
@@ -80,17 +87,19 @@ server.listen(5000);
 </pre>
 
 <p>
-The main module given above incorporates the domain-based error handling 
+The above main module code incorporates the domain-based error handling 
 that we covered in a previous assignment.
 It adds a <code>replyNotFound</code> function, 
 which sends a response to the client when the client 
 requests a resource that the server does not recognize. 
-For this, we return a response code of 404.
+HTTP responses include 3-digit codes;
+A code value of 404 signifies that a resource is not found.
 </p>
 
 <p>
 The main module also delegates the processing 
-of requests for <code>/</code> to module <code>root</code>.
+of requests for the root resource path <code>/</code> to a module named <code>root</code>.
+The next step is to implement the root module.
 </p>
 
 <p>
@@ -111,11 +120,49 @@ exports.handle = function(req, res) {
 </pre>
 
 <p>
-In root.js, we create a buffer object to store a string in the UTF-8 character encoding. 
-We add a header that indicates the content type is <code>text/plain</code> 
-and the character encoding is UTF-8. 
+In <em>root.js</em>, we create a buffer object to store a string in the UTF-8 character encoding. 
+The UTF-8 encoding is the default encoding,
+so we could have written the following.
+</p>
+
+<pre>
+var body = new Buffer("I'm a codfish.");
+</pre>
+
+<p>
+However, our code is explicit about the encoding as a form of documentation.
+</p>
+
+<p>
 We use the name <code>body</code> to store the string 
-because it is the contents of the HTTP message body to send to the browser.
+because it will comprise the body of the HTTP message sent to the browser.
+</p>
+
+<p>
+When we return the message data to clients,
+we include a header that indicates 
+the data is of type <em>text/plain</em>.
+You shoud read <a href="http://en.wikipedia.org/wiki/Internet_media_type">Internet Media Types</a>
+to become familiar with this concept and the standard labels.
+</p>
+
+<p>
+Following the content type name is a semicolon followed by <code>charset=UTF-8</code>.
+When sending character data such as <em>text/plain</em> and <em>text/html</em>,
+the browser needs to know which character set should be used to
+map byte values to characters.
+The default character set for strings sent over HTTP is UTF-8,
+which is a variable length representation of characters.
+Other character sets are common in other situations.
+For example, Java programs represent strings internally using
+the UTF-16 encoding, which is a fixed-length encoding.
+Javascript uses it own character encoding that is mostly identical to UTF-8
+with exceptions for some uncommon characters.
+</p>
+
+<p>
+Although UTF-8 is the encoding normally assumed by browsers if not otherwise specified,
+we include it anyway to ensure that the client interprets the character data correctly.
 </p>
 
 <p>
@@ -123,20 +170,31 @@ Test the server code and debug so that it runs correctly.
 </p>
 
 <p>
-Note that Node.js uses chunked encoding by default to send HTTP message data. 
-To see this, use the Web developer tools available for your browser.  
+Node.js uses <a href="http://en.wikipedia.org/wiki/Chunked_transfer_encoding">chunked encoding</a> 
+by default to send data in the body of HTTP messages.
+Run your server and verify this
+with the Web developer tools available for your browser.  
 A good place to learn about how to use the developer tools built into Chrome is 
 <a href="http://discover-devtools.codeschool.com">the Dev-tools course on Code School</a>.
+If you are using a different browser,
+you will need to locate similar documentation and spend time to learn
+how to use its Web developer tools.
+</p>
+
+<p class="csusbdt-callout">
+It is essential to learn the Web developer tools for at least one browser.
 </p>
 
 <p>
-The alternative to chunked encoding is to set a <code>Content-Length</code> header. 
-Incorporate this into your server code and test. 
-You may need to do some research to learn about the HTTP Content-Length header.
-When you have successfully made this modification to <em>main.js</em>,
-make sure that you add, commit and push this file as well as <em>root.js</em>.
+The alternative to sending data with chunked encoding 
+is to set a <code>Content-Length</code> header. 
+The content length header tells the receiveing end exactly how many
+bytes are included in the body of the HTTP message.
+Research the HTTP Content-Length header and then
+modify the root module to send the content type 
+instead of the chunked encoding.
 I will evaluate your work on this assignment by whether your server code
-runs correctly with the Content-Length header.
-Your code should also satisfy the criteria described in the syllabus.
+runs correctly with the Content-Length header
+and satisfies the code readability criteria described in the syllabus.
 </p>
 
