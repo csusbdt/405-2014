@@ -47,14 +47,18 @@ Read up to and including step 3 of
 <a href="https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started">Ajax - Getting Started</a>. 
 Test the example code presented in step 3. 
 Do this by adding the code to <em>app.html</em>.  
+However, instead of requesting <em>test.html</em> as in the example code, 
+request a resource that is retrievable through the path <em>/message</em>. 
 </p>
 
 <p>
-Instead of requesting <em>test.html</em> as in the example code, 
-request a resource named <em>message</em>. 
 In the server code, return the string <em>hello ajax</em> for requests for <em>/message</em>. 
-Create a module named <code>message</code> to handle these requests. 
+Do this in a module named <code>message.js</code>. 
 The message module should resemble the root module 
 provided in the <a href="buf.html">buffers assignment</a> 
 because we simply need to return a string of content-type <code>text/plain; charset=UTF-8</code>.
+</p>
+
+<p>
+No <code>init</code> function is needed for the message module.
 </p>
