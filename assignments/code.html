@@ -1,0 +1,159 @@
+---
+layout: assignment
+title: Code Assignment
+---
+
+<!--
+<div class="csusbdt-video-btn">
+  <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/ceU_XWS9aoc">Video</a>
+</div>
+-->
+
+<h2>Overview</h2>
+
+<p>
+The purpose of this assignment is 
+to practice applying the source code readability criteria in the syllabus.
+This will help you get into the habit of following
+patterns that improve the readability of your code.
+</p>
+
+<h2>Assignment folder</h2>
+
+<p>
+Create a directory named <em>code</em> 
+in your repository to hold the work for this assignment. 
+When you complete this assignment, 
+the contents of this folder will be the following.
+</p>
+
+<ul>
+<li>main.js</li>
+</ul>
+
+<h2>Instructions</h2>
+
+<p>
+The following code is a Node.js program that
+prints the first 100 prime numbers.
+Place this code in a file named <em>main.js</em>
+and verify that it runs as expected.
+</p>
+
+<pre>
+// This program prints the first 100 prime numbers.
+
+// Return true if n is priime.
+function isPrime(n) {
+  for (var i = 2; i < n; ++i) {
+  if (n % i == 0) return false;
+  }
+  console.log(n);
+  return true;
+
+}
+
+var numberOfPrimesDeleted = 0;
+var candidatePrime = 2;
+var k = 0;
+
+while (numberOfPrimesDeleted<100) {
+        if (isPrime(candidatePrime)) {
+                ++numberOfPrimesDeleted;
+        }
+        // Increment candidatePrime.
+        ++candidatePrime;
+}
+</pre>
+
+<p>
+The code given above does not satisfy the readability criteria
+stated in the course syllabus.
+For this assignment, you should modify <em>main.js</em> to resolve these issues.
+When you are done, the resulting code should satisfy all
+of the given readability criteria.
+</p>
+
+<p>
+For your convenience, the readability criteria
+in the course syllabus are repeated in the following table.
+</p>
+
+<table class="table">
+  <caption>Readability Criteria for Source Code</caption>
+  <thead>
+    <tr>
+      <th>Criterion</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Cleanliness</td>
+      <td>Have unnecessary variables and logic been removed from the code?</td>
+    </tr>
+    <tr>
+      <td>Logical indentation</td>
+      <td>Does indentation show logical structure?</td>
+    </tr>
+    <tr>
+      <td>Consistent indentation</td>
+      <td>Does indentation follow a consistent policy?</td>
+    </tr>
+    <tr>
+      <td>Portable indentation*</td>
+      <td>Are tabs omitted?</td>
+    </tr>
+    <tr>
+      <td>Logical spacing</td>
+      <td>Does spacing show logical structure?</td>
+    </tr>
+    <tr>
+      <td>Consistent spacing</td>
+      <td>Does spacing follow a consistent policy?</td>
+    </tr>
+    <tr>
+      <td>Separation of concerns</td>
+      <td>Are concerns separated when possible?</td>
+    </tr>
+    <tr>
+      <td>Responsibilities</td>
+      <td>Are responsibilities of functions and classes clear 
+          and consistent with their names?</td>
+    </tr>
+    <tr>
+      <td>Expressive and clear naming</td>
+      <td>Do variables, functions and classes have names 
+          that clearly express their purpose in the program?</td>
+    </tr>
+    <tr>
+      <td>Necessary comments</td>
+      <td>Are comments included when needed?</td>
+    </tr>
+    <tr>
+      <td>Unnecessary comments</td>
+      <td>Are superfluous comments omitted?</td>
+    </tr>
+    <tr>
+      <td>Spelling</td>
+      <td>Are user-defined identifiers free of spelling errors?
+          Are comments and other documentation free of spelling and grammatical errors?</td>
+    </tr>
+    <tr>
+      <td>Organization</td>
+      <td>Is source code well organized into files and folders?</td>
+    </tr>
+  </tbody>
+</table>
+
+<p class="csusbdt-callout">
+  *Don't use tabs for indentation in your source code in this course.
+  Tabs display differently in different viewing and editing tools.
+  In general, tabs will degrade readability for some people who read your code,
+  especially if you mix tabs with spaces.
+  If you want full score on your assignments in this course, you should not use tabs.
+  If you are in the habit of pressing tab in your editor
+  and want to continue working this way,
+  look for an option in your editor to replace tabs with spaces.
+</p>
+
