@@ -41,9 +41,9 @@ and verify that it runs as expected.
 </p>
 
 <pre>
-// This program prints the first 100 prime numbers.
+// This program prints the first 100 priime numbers.
 
-// Return true if n is priime.
+// Return true if n is prime.
 function isPrime(n) {
   for (var i = 2; i < n; ++i) {
   if (n % i==0) return false;
@@ -141,6 +141,24 @@ in the course syllabus are repeated in the following table.
           Are comments and other documentation free of spelling and grammatical errors?</td>
     </tr>
     <tr>
+      <td>Nonredundant</td>
+      <td>When 2 or more places inside a program need to perform the same activity,
+          is that activity defined as a function and called as such from where it is needed?</td>
+    </tr>
+    <tr>
+      <td>Robust to changes</td>
+      <td>Does the code avoid breakage problems when modified. 
+          For example, the following code is not robust to changes.
+          <pre>
+            var s = 'hello';
+            print 'The length of the string is ' + 5;</pre>
+          It should be written as follows.
+          <pre>
+            var s = 'hello';
+            print "The length of the string is " + s.length;</pre>
+      </td>
+    </tr>
+    <tr>
       <td>Organization</td>
       <td>Is source code well organized into files and folders?</td>
     </tr>
@@ -175,4 +193,31 @@ Make sure you locate and fix each of these violations.
   <li>Unnecessary comments (There are unnessary comments.)</li>
   <li>Spelling (There is a spelling error.)</li>
 </ul>
+
+<h2>How Many Spaces Should I Use for Indentation?</h2>
+
+<p>
+The most common indentation for Javascript is 2 spaces.
+People working on other languages tend to use more than 2 spaces.
+<p>
+
+<p>
+The reason for 2 spaces in Javascript is that Javascript programs 
+include more indents than programs written in other languages.
+This is due to the use of anonymous functions and other reasons.
+When there are so many indents, 
+too much of the code gets shifted too far to the right.
+</p>
+
+<p>
+Excessive indents is also a problem with HTML.
+</p>
+
+<p>
+In this course, you can use any number of spaces for indents
+as long as you are consistent with each assignment.
+For example, if you use 4 spaces in an assignment, 
+then use 4 spaces for every indent in that assignment.
+You can vary number of spaces between assignments.
+</p>
 

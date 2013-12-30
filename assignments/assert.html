@@ -98,15 +98,21 @@ var util = require('./util');
 </pre>
 
 <p>
-This assignment makes use of the <code>ok</code> function in the Node.js <code>assert</code> module.
-To use the function, you need to <code>require</code> the assert module.
-If you pass a true value to <code>assert.ok</code> nothing happens;
+This assignment makes use of the Node.js <code>assert</code> module.
+To use this module, you need to <code>require</code> it as follows.
+</p>
+
+<pre>
+var assert = require('assert');
+</pre>
+
+<p>
+If you pass a true value to <code>assert</code> nothing happens;
 if you pass a false value, execution terminates with a failed assertion message.
 For example, the following program will terminate with a failed assertion message.
 </p>
 
 <pre>
-var assert = require('assert').ok;
 assert(2 + 2 === 5);  // generates failed assertion message
 </pre>
 
@@ -115,7 +121,7 @@ The following program will terminate with no message.
 </p>
 
 <pre>
-var assert = require('assert').ok;
+var assert = require('assert');
 assert(2 + 2 === 4);  // no message
 </pre>
 
@@ -158,7 +164,7 @@ The following program shows how to express this using assertion statements.
 </p>
 
 <pre>
-var assert = require('assert').ok;
+var assert = require('assert');
 assert(0 == false);
 assert(!(0 === false));
 </pre>
@@ -222,7 +228,7 @@ and continue to include 2 assertions for each row in the table.
 </p>
 
 <pre>
-var assert = require('assert').ok;
+var assert = require('assert');
 
 // compare 0 and false
 assert(0 == false);
