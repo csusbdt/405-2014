@@ -360,6 +360,7 @@ The request handler on the server should simply ignore this value.
 If you set <code>x</code> to the result of calling
 the Javascript function <code>Math.random</code> in the query string part of the URL,
 then you will end up with an HTTP request similar to the following.
+The random component of the URL will ensure that the response is not cached by the client.
 </p>
 
 <pre>
@@ -386,6 +387,6 @@ Use a Web traffic inspection tool to verify that the browser always retrieves th
 Adding a random value to the query string of the request URL
 is probably sufficient to keep the browser from using cached data.
 However, it's nice to include the headers because they
-keep the browser from unnecessary caching.
+tell browsers to not cache each variation of the request.
 </p>
 
