@@ -13,18 +13,10 @@ The process for iOS is similar but will not be covered.
 </p>
 
 <p>
-This assignment builds on the gift assignment 
-and the following three assignments from 
-<a href="https://github.com/csusbdt/322-2013">CSE 322 Web Page Programming</a>.
+This assignment builds on the gift assignment.
 </p>
 
-<ul>
-<li><a href="https://github.com/csusbdt/322-2013/wiki/Android-1">Android 1</a></li>
-<li><a href="https://github.com/csusbdt/322-2013/wiki/Android-2">Android 2</a></li>
-<li><a href="https://github.com/csusbdt/322-2013/wiki/Android-3">Android 3</a></li>
-</ul>
-
-<h2>Articles related to WebView</h2>
+<h2>Ralated Article</h2>
 
 <ul>
 <li><a href="https://www.facebook.com/notes/facebook-engineering/buck-how-we-build-android-apps-at-facebook/10151454619998920">Buck: How we build Android apps at Facebook</a></li>
@@ -35,36 +27,588 @@ and the following three assignments from
 <p>
 Create a directory named <em>mobile</em> 
 for the work you do for this assignment. 
-A good starting point for this assignment 
-is to copy the contents the <em>gift</em> folder 
+Copy the contents the <em>gift</em> folder 
 into the <em>mobile</em> folder.
 </p>
 
+<h2>Install the Android SDK</h2>
+
 <p>
-At the end of the assignment, this folder will contain the following files.
+Install the Android SDK but do not install Eclipse (unless you want to). 
+To avoid installing Eclipse, do not download the SDK bundle. 
+Instead, download the <em>SDK for an existing IDE</em>.
+</p>
+
+<p class="csusbdt-callout">
+The standard IDE to use for developing Android applications is Eclipse.
+However, Eclipse consumes a lot of memory and can run slowly on many computers. 
+But Eclipse is not necessary because you can accomplish the same results 
+using the command line interface to the Android SDK tools.
+</p>
+
+<p>
+Do not locate the Android SDK inside your course repository.
+In other words, do not store the SDK folder anywhere under <em>~/405</em>.
+</p>
+
+<p>
+Modify your environment as follows.
 </p>
 
 <ul>
-<li>README.md</li>
-<li>createdb.bat (if on Windows) or createdb.sh (if on OS X or Linux)</li>
-<li>... more to come</li>
+<li>Set an environmental variable named ANDROID_SDK_HOME 
+    that points to the location of the Android SDK on your system.
+</li>
+<li>Append ${ANDROID_SDK_HOME}/tools to your system path, 
+    where ${ANDROID_SDK_HOME} is the folder location of the Android SDK on your system.
+    Use %ANDROID_SDK_HOME%/tools if you are on Windows.
+</li>
+<li>Append ${ANDROID_SDK_HOME}/platform-tools to your system path. 
+    Use %ANDROID_SDK_HOME%/platform-tools if you are on Windows.
+</li>
 </ul>
 
-<h2>Instructions</h2>
-
 <p>
-Use the technique covered in the 3 Android assignments 
-from CSE 322 to convert the gift application to an Android application.  
+In Windows, you need to go through the Control Panel to set your environment. 
+Alternatively, run a script each time you start a terminal session that makes the above settings. 
 </p>
 
 <p>
-Thoroughly test your application with an Android device 
-or the emulator from the Android SDK. 
-If you use a physical Android device, 
-you will need to determine the IP address 
-of the computer you run the server on, 
-and use this IP address in the client code. 
-If you use the Android emulator, 
-use IP address 10.0.2.2 in the client code to reach the application server.
+In OS X, you can accomplish the above by adding the following to <em>~/.bash_profile</em>. 
+You should restart the terminal program to make sure these settings take effect.
+</p>
+
+<pre>
+export ANDROID_SDK_HOME=$HOME/android-sdk-macosx
+export PATH=$PATH:$ANDROID_SDK_HOME/tools
+export PATH=$PATH:$ANDROID_SDK_HOME/platform-tools
+</pre>
+
+<p>
+The above configuration for OS X assumes 
+that you located the Android SDK in your home directory. 
+If you located it somewhere else, then adjust ANDROID_SDK_HOME accordingly.
+</p>
+
+<p>
+If you're working from the lab computers, do the following instead:
+</p>
+
+<pre>
+export ANDROID_SDK_HOME=$HOME
+export PATH=$PATH:/share/android-sdks/tools
+export PATH=$PATH:/share/android-sdks/platform-tools
+</pre>
+
+<p>
+Don't forget to restart your terminal session to make sure the new settings are loaded.
+You might need to logout and log back in again.
+</p>
+
+<p>
+Run the Android SDK Manager as follows.
+</p>
+
+<pre>
+android sdk
+</pre>
+
+<p>
+In the SDK manager window, install the Android SDK Tools, 
+Android SDK Platform-tools, Android SDK Build-tools, 
+and the most recent Android target (API 19 at the time of this writing). 
+</p>
+
+<h2>Configure Android Device for Testing</h2>
+
+<p>
+If you don't have an Android device, 
+then you will need to use the emulator that comes with the Android SDK.
+In this case, skip this section.
+</p>
+
+<p>
+If you have an Android device that you can use for testing,
+then configure your phone to test apps you are developing.
+Depending on the version of Android that you are using,
+you will do something like the following.
+</p>
+
+<ul>
+<li>Turn on USB debugging.
+    To do this, look under Settings ... Developer Options</li>
+<li>Allow installation so apps from sources other than the Play Store.
+    To do this, look under Settings ... Security.</li>
+</ul>
+
+<p>
+Connect your phone to your computer with a USB cable.
+The cable will have a mini USB plug on one end for the phone
+and a regular USB plug on the other end for the computer.
+</p>
+
+<h2>Configure Android Emulator for Testing</h2>
+
+<p>
+If you have a physical Android device that you want to use for testing
+the application developed in this assignment, then you can skip this section.
+</p>
+
+<p>
+Run the Android Virtual Device Manager as follows.
+</p>
+
+<pre>
+android avd
+</pre>
+
+<p>
+Create a new virtual device to use for testing.
+To make sure the emulator runs within the memory available on your computer,
+define a virtual device that has low resource requirements, such as supporting a small screen, low RAM, etc.
+Verify that you created a virtual device.
+</p>
+
+<pre>
+android list avd
+</pre>
+
+<p>
+Run the emulator with the AVD you created. 
+Suppose that you named the virtual device <em>andy</em>.
+Use the following to launch the emulator.
+</p>
+
+<pre>
+emulator -avd andy
+</pre>
+
+<h2>Determine Build Target</h2>
+
+<p>
+These instructions assume that you have the most recent version of Android 
+and it is <em>android-19</em>. 
+To check this, run the following command.
+</p>
+
+<pre>
+android list targets
+</pre>
+
+<p>
+If you see a version of Android later than android-19, 
+then use that in place of android-19 in these instructions.
+</p>
+
+<h2>Install Apache Ant</h2>
+
+<p>
+Ant is an Apache Foundation project 
+that is widely used for building systems written in Java.
+The Android SDK uses Ant.
+For this reason, you need to have ant installed on your system 
+to complete the remainder of this assignment.
+</p>
+
+<p>
+Ant depends on the Java development kit (JDK).
+Before installing ant, run the following command 
+to see if the JDK is installed on your system.
+</p>
+
+<pre>
+javac -version
+</pre>
+
+<p>
+If the above command is not found, then you need to install the JDK. 
+For this assignment and the remainder of the course, it is sufficient to install the 
+<a href="http://www.google.com/search?q=JDK+SE">JDK Standard Edition (JDK SE)</a>.
+I recommend that you install this version of the JDK.
+</p>
+
+<p>
+After installing the JDK, use the following command
+to verify that the Java compiler is runnable from the command line.
+</p>
+
+<pre>
+javac -version
+</pre>
+
+<p>
+Go to <a href="http://ant.apache.org/">the Apache Ant website</a>
+and read a little of the documentation to get more familiar with it.
+Download and install it.
+</p>
+
+<p>
+Ant is a command line tool.
+After installing Ant, use the following to check that you can run it
+from the command line.
+</p>
+
+<pre>
+ant -version
+</pre>
+
+<p>
+If the command is not found you should try 2 things. 
+First, close your terminal window 
+and open a new terminal window to make sure your environment is current; 
+then try the command again. 
+Second, modify your system path to include a path to the ant executable. 
+If you do this, make sure you close 
+and reopen a terminal window to make sure the environment is current.
+</p>
+
+<p>
+If the command is found, but ant complains about not finding something in a JDK, 
+then create an environmental variable named JAVA_HOME 
+that points to the location of the JDK folder in your system. 
+After setting this environmental variable, 
+close and reopen your terminal window to make sure the environment is current.
+</p>
+
+<h2>Learn About Ant</h2>
+
+<p>
+The ant command looks for a file with the name <em>build.xml</em> 
+that contains build targets. 
+If a default target is specified in <em>build.xml</em>, 
+then ant will run it. 
+To run a specific target, 
+specify the name of the target as an argument to the ant command. 
+To see how this works, create file <em>build.xml</em> with the following contents.
+</p>
+
+<pre>
+&lt;project>
+  &lt;target name="clean" description="Delete temp folder.">
+    &lt;delete dir="temp" />
+  &lt;/target>
+&lt;/project>
+</pre>
+
+<p>
+This build file contains a single target named <em>clean</em>,
+which deletes a folder named <em>temp</em>.
+Use the following command to run the clean target.
+</p>
+
+<pre>
+ant clean
+</pre>
+
+<p>
+If you get a <em>command not found</em> message when you try to run ant,
+it means that the folder containing the Ant executable is not 
+in your system path.  To solve this problem, add this
+folder to your system path.
+</p>
+
+<p>
+<em>Clean</em> is a common target that is found in build files;
+its purpose is to delete generated files, such as java class files.
+</p>
+
+<p>
+To see a list of all targets in a build file, run the following.
+</p>
+
+<pre>
+ant -projecthelp
+</pre>
+
+<h2>Generate an Android Project Folder</h2>
+
+<p>
+In ~/405/mobile, run the following command to create an Android project named <em>cse405</em>.
+In Windows, replace the Unix line continuation character '\' 
+with the Windows line continuation character '^'. 
+</p>
+
+<pre>
+android create project            \
+        --target android-19       \
+        --name cse405             \
+        --path ./android          \
+        --activity MainActivity   \
+        --package cse405.gift
+</pre>
+
+<p>
+The above command creates a folder named <em>android</em>
+and populates it with files that comprise a hellow world application.
+Notice that the android folder contains <em>build.xml</em>;
+this file contains targets that perform various build operations
+such as compile, install, clean, etc.
+</p>
+
+<h2>Generate a Public-Private Key Pair</h2>
+
+<p>
+To install an Android application,
+the installation file (apk file) needs to be signed.
+Our build script will sign the apk file with the keys that we provide to it.
+For this purpose, we will generate a key pair and self-signed certifcate.
+Create file <em>~/405/mobile/android/gen-keystore.sh</em> with the following contents.
+</p>
+
+<pre>
+keytool -genkey                    \
+        -alias dev                 \
+        -keyalg RSA                \
+        -keysize 2048              \
+        -dname CN=localhost        \
+        -keypass 123456            \
+        -validity 10000            \
+        -keystore cse405.keystore  \
+        -storepass 123456
+</pre>
+
+<p>
+If you are on Windows, name the file <em>gen-keystore.bat</em>
+and substitute the Unix line continuation character '\'
+with the Windows line continuation character '^'.
+</p>
+
+<p>
+In Linux and OS X, make the file executable with the following.
+</p>
+
+<pre>
+chmod +x gen-keystore.sh
+</pre>
+
+<p>
+Run the script and observe that a file named <em>cse405.keystore</em> was created.
+This file contains your key pair and self-signed certificate.
+</p>
+
+<p>
+In the keystore, we set the alias of the generated key pair to <em>dev</em>
+because we will use this key for testing development builds of the application.
+</p>
+
+<h2>Test with the Hello World App</h2>
+
+<p>
+If you have a physical Android device that you prepared in the last section,
+then make sure it is connected to your computer.
+If you do not have a physical device for testing,
+then make sure the Android emulator is running.
+</p>
+
+<p>
+Run the debug target of the Android build script to generate an apk file.
+</p>
+
+<pre>
+cd ~/405/mobile/android
+ant debug
+</pre>
+
+<p>
+Observe that file <em>bin/cse405-debug.apk</em> was created.
+This is the application installer.
+</p>
+
+<p>
+Run the installd target to install the application to your testing device.
+</p>
+
+<pre>
+ant installd
+</pre>
+
+<p>
+If you are on Windows and the system can not find the device, then read
+<a href="http://stackoverflow.com/a/12827493">this comment</a>.
+</p>
+
+<p>
+To uninstall the app, run the uninstall target.
+</p>
+
+<pre>
+ant uninstall
+</pre>
+
+
+<h2>Add Derived Files to .gitignore</h2>
+
+<p>
+Derived files should not be added to your repository.
+Add the following lines to <em>~/405/.gitignore</em>
+to inform git of the files you do not want included in the repository.
+If this file does not yet exist, then create it.
+</p>
+
+<pre>
+/mobile/android/gen
+/mobile/android/bin
+/mobile/android/cse405.keystore
+/mobile/android/local.properties
+</pre>
+
+<p>
+We also include the generated keystore file
+so that different developers can generate their own keystores.
+Normally, separate keystores are generated development,
+staging and production builds of an application.
+</p>
+
+<p>
+Also notice that <em>local.properties</em> is not included in the repository.
+This file contains configuration that is particular to the local computer
+and therefore should not be shared between development environments.
+Read the comment inside <em>local.properties</em>.
+</p>
+
+<h2>Modify the Android Manifest File</h2>
+
+<p>
+Android applications use a file named <em>AndroidManifest.xml</em>
+to declare properties and requirements of the application 
+to the end user's operating system.
+Because our application needs to connect to a Web application server,
+we need to request permission to access the Internet.
+To do this, 
+add the following XML element to the root element of the <em>AndroidManifest.xml</em>.
+</p>
+
+<pre>
+&lt;uses-permission android:name="android.permission.INTERNET" />
+</pre>
+
+<p class="csusbdt-callout">
+If you don't understand XML and what a <em>root element</em> is, 
+then you should familiarize yourself with 
+<a href="http://www.xmlnews.org/docs/xml-basics.html">the basic ideas of XML</a>.
+</p>
+
+<p>
+Notice references to <em>@string/app_name</em> in the manifest file.
+These are references to a string resource named <em>app_name</em>,
+which are defined in a file named <em>strings.xml</em>.
+In <em>res/values/strings.xml</em>,
+change the name of the application from <em>MainActivity</em> to <em>CSE 405</em>.
+</p>
+
+<p>
+After making these changes, make sure you can still compile and install the application.
+</p>
+
+<pre>
+ant debug
+ant installd
+</pre>
+
+<p>
+Verify that the application name is now <em>CSE 405</em>.
+</p>
+
+<h2>Incorporate the Gift Application Client</h2>
+
+<p>
+In this section,
+we create an instance of WebView in our Android application and have it load
+our client HTML file.
+</p>
+
+<p>
+Replace the contents of <em>res/layout/main.xml</em> with the following.
+</p>
+
+<pre>
+&lt;?xml version="1.0" encoding="utf-8"?>
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+&lt;WebView  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+/>
+&lt;/LinearLayout>
+</pre>
+
+<p>
+Replace the contents of <em>src/cse405/gift/MainActivity.java</em> with the following.
+</p>
+
+<pre>
+package cse405.gift;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.webkit.WebView;
+import android.webkit.WebChromeClient;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebSettings;
+import android.view.Window;
+import android.util.Log;
+
+public class MainActivity extends Activity
+{
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        Log.i("cse405", "onCreate entered.");
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.main);
+        WebView webView = (WebView) findViewById(R.id.main);
+        webView.setWebChromeClient(new WebChromeClient() {
+            public boolean onConsoleMessage(ConsoleMessage cm) {
+                Log.d("cse405", cm.message()      + 
+                                " -- From line "  +
+                                cm.lineNumber()   + 
+                                " of "            +
+                                cm.sourceId()
+                );
+                return true;
+            }
+        });
+        webView.getSettings().setJavaScriptEnabled(true);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webView.loadUrl("http://192.168.1.6:5000/");
+    }
+}
+</pre>
+
+<p>
+With the above coode, there are 2 ways to write to the Android log.
+First, from inside the Java source code, make calls to the static
+functions of the <code>Log</code> class.
+Second, from inside the client Javascript, 
+make calls to <code>console.log</code>.
+To test this, run the following command before running the application on your test device.
+</p>
+
+<pre>
+adb logcat -c; adb logcat -s cse405
+</pre>
+
+<p>
+Compile and install revisions to the system.
+</p>
+
+<pre>
+ant debug
+ant installd
+</pre>
+
+<p>
+Add a call to <code>console.log</code> from within your client Javascript
+to verify that output gets directed to the Android log.
+Then start (or restart) your Web application server.
+When you launch the application on your testing device,
+look at the logging output.
 </p>
 
