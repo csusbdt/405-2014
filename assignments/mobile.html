@@ -588,11 +588,17 @@ First, from inside the Java source code, make calls to the static
 functions of the <code>Log</code> class.
 Second, from inside the client Javascript, 
 make calls to <code>console.log</code>.
-To test this, run the following command before running the application on your test device.
+To test this, run the following 2 commands before running the application on your test device.
+The first command clears the log file.
+The second command starts a process that displays lines written to the log file,
+filtered to include only those lines associated with the tag <em>cse405</em>.
+See <a href="http://developer.android.com/tools/debugging/debugging-log.html">Reading and Writing Logs</a>
+for more information.
 </p>
 
 <pre>
-adb logcat -c; adb logcat -s cse405
+adb logcat -c
+adb logcat -s cse405
 </pre>
 
 <p>
