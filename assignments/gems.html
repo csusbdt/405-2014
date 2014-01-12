@@ -60,6 +60,49 @@ Then, add a game screen with the following elements.
 </ul>
 
 <p>
+In couchDB, documents have revision string.
+When you update a document, you need to provide the current revision 
+for the document you are updating.
+If the revision label you submit does not match the current revision string
+in the document, then CouchDB will not perform the update.
+In this case, it returns a result object 
+that contains an attribute named <code>error</code>
+set to the string <code>'conflict'</code>.
+This outcome occurs when two separate activities are trying to update the same document.
+If both of these activities obtain the version string for a document before either
+of them does an update, then a race condition is set up.
+The activity that executes the update first wins and the one that follows loses.
+</p>
+
+<p>
+The gem application uses a simple strategy to resolve version conflicts;
+it updates the user's view of the information in the document, tells the user
+that something has changed and suggests that the user try again.
+To test this in the gem application,
+open 2 different browsers and log in as user 'a' in both browsers.
+By a gem in one browser window and without refreshing the screen, 
+try to buy a gem in the other browser window.
+The application updates the balance and gem count that is displayed and
+then asks the user to try again.
+As you extend the gems application, you should 
+follow this pattern to resolve revision conflicts wherever they may occur.
+</p>
+
+<!--p>
+Revision conflicts within transactions.
+A transaction is when 2 or more operations are performed.
+For example, a user reads their balance and then purchases a gem.
+In the above example, the user's balance changes between the time the user
+reads the balance and purchases a gem.
+This is a user transaction because the user is performing 2 operations.
+It is easy to test revision conflicts in user transactions
+because you can control the timing of user actions.
+In the next assignment,
+you will need to handle a revision conflict in an application-level transaction,
+which is more difficult to test.
+</p-->
+
+<p>
 The <a href="https://github.com/csusbdt/gems/blob/master/README.md">README.md</a> 
 file in the project contains links to videos I made that explain the code.
 </p>
