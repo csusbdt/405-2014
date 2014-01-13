@@ -75,17 +75,18 @@ The activity that executes the update first wins and the one that follows loses.
 </p>
 
 <p>
-The gem application uses a simple strategy to resolve version conflicts;
-it updates the user's view of the information in the document, tells the user
-that something has changed and suggests that the user try again.
-To test this in the gem application,
+The gem application uses a simple strategy to resolve version conflicts 
+that occur within document updates;
+it replaces any stale information in the user's interface and 
+suggests that the user try again.
+To see how this works in the starter code for the gems application, 
 open 2 different browsers and log in as user 'a' in both browsers.
-By a gem in one browser window and without refreshing the screen, 
+Buy a gem in one browser window and without refreshing the screen, 
 try to buy a gem in the other browser window.
 The application updates the balance and gem count that is displayed and
 then asks the user to try again.
 As you extend the gems application, you should 
-follow this pattern to resolve revision conflicts wherever they may occur.
+follow this pattern in each place where you update a document.
 </p>
 
 <!--p>

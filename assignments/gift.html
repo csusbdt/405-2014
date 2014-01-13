@@ -53,6 +53,51 @@ The gifting screen should have the following 3 controls:
 <p>
 Your code needs to handle the possibility of version conflicts at several points.
 You should handle these conflicts following the pattern established in the previous
-assignment: the user is presented with current information and asked to try again.
+assignment: the application updates any stale information in the user's interface
+and tells the user to try again.
+However, there is one place that is a little complicated.
+In the gifting operation, the number of gems in the gift giver document needs to be reduced by one
+and the number in the gift recipient's document needs to be increased by one.
+It is possible that one of these operations suceeds and the other fails
+because one of the underlying documents gets updated by some other activity.
+For example, imagine the following sequence of events.
 </p>
+
+<ul>
+<li>User A submits a request to gift a gem to user B.</li>
+<li>The server reads A's document to handle A's request.</li>
+<li>The server reads B's document to handle A's request.
+    Suppose the version string for B's document is '100'.</li>
+<li>User B submits a request to consume a gem.</li>
+<li>The server reads B's document to handle B's request.
+    The version string is still '100'.</li>
+<li>The server continues to handle B's request by 
+    writing a new version of B's document showing one less gem.
+    As a result, the database attaches a new version string of '101' to B's document.</li>
+<li>The server continues to handle A's request by trying to write
+    a new version of B's document with the old version string '100'.
+    The database rejects the write operation.</li>
+</ul>
+
+<p>
+In the above senario, A's request to gift a gem fails when the server tries to 
+update B's document because it has an old version string.
+Our strategy in this and similar situations is to ask the user to try again.
+For this to be fair to the user,
+we should try to add a gem to B's document before subtracting a gem from A's document.
+If the update to B's document succeeds and then the update to A's document fails,
+then A is not charged for a gem that gets transferred to B.
+In a game application, this is probably a better outcome than the other way around,
+where A is charged a gem that B never gets.
+For this reason, we should update the gift recipient's document first,
+and if that succeeds, update the gift giver's document.
+If we want to guard against this outcome, we would need add more complex code
+that guarrantees that the 2 updates occur as a single transaction 
+that succeeds as a whole or fails as a whole.
+In addition to increasing the complexity of our code
+(which increases human labor costs),
+the application would also run more slowly and consume more network and hardware resources.
+For a game, these additional costs are likely to be unjustified.
+</p>
+
 
