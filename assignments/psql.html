@@ -11,7 +11,7 @@ title: PostreSQL Assignment
 
 <p>
 The purpose of this assignment 
-is to learn a little about relational databases
+is to learn about relational databases
 and how to use a relational database 
 called <a href="http://www.postgresql.org/">PostqreSQL</a>.
 </p>
@@ -21,9 +21,15 @@ called <a href="http://www.postgresql.org/">PostqreSQL</a>.
 </p>
 
 <p>
-This assignment requires research and self-study.
-If you get to this assignment early enough,
-I can help you solve some of the problems you encounter.
+This assignment builds on the gift assignment.
+</p>
+
+<p>
+This assignment requires more research and self-study than previous assignments.
+</p>
+
+<p>
+Install PostgreSQL and start it. 
 </p>
 
 <p>
@@ -35,30 +41,137 @@ PostgreSQL documentation</a>
 may be sufficient.
 </p>
 
-<!--
 <p>
-Starting postresql in the labs:
+You might need to study the following to
+start postresql in the labs:
 http://www.postgresql.org/docs/8.1/static/postmaster-start.html
 </p>
--->
 
-<h2>Assignment Folder</h2>
+<h2>Assignment folder</h2>
 
 <p>
-Create a directory named <em>psql</em> 
-for the work you do for this assignment. 
-Start this assignment by making a copy of
-your solution to the gift assignment.
+The starting point for this assignment 
+is the code you developed for the gift assignment.
+Make a copy of your <em>gift</em> 
+folder and name it <em>psql</em>.
+</p>
+
+<p>
+We will completely replace the contents of the scripts folder.
+For this reason, start by deleting the files in <em>~/405/psql/scripts</em>.
+</p>
+
+<p>
+Inside the <em>psql</em> folder,
+create file <em>gift.sql</em> with the following contents.
+</p>
+
+<pre>
+DROP TABLE users;
+
+CREATE TABLE users (
+    _id       varchar(80) primary key,
+    _rev      varchar(80),
+    pw        varchar(80),
+    balance   real,
+    gems      int,
+    score     int
+);
+
+INSERT INTO users VALUES ('a', '0', 'a', 5, 0, 0);
+INSERT INTO users VALUES ('b', '0', 'b', 0, 0, 0);
+</pre>
+
+<p>
+Create <em>local.sh</em> with the following contents.
+</p>
+
+<pre>
+psql -d gift -f gift.sql
+</pre>
+
+<p>
+Run <em>local.sh</em> to create the gift database with the local PostgreSQL server.
+</p>
+
+<p>
+Replace <em>db.js</em> with the following.
+</p>
+
+<pre>
+var assert      = require('assert');
+var querystring = require('querystring');
+var http        = require('http');
+var pg          = require('pg');
+
+var url = 'postgres://localhost/gift';
+
+exports.init = function(cb) {
+  pg.connect(url, function(err, client, done) {
+    if (err) throw err;
+    client.query("select * from users where _id = 'a'", function (err, result) {
+      done();
+      if (err) throw err;
+      cb();
+    })
+  });
+};
+
+exports.getDoc = function(_id, cb) {
+  pg.connect(url, function(err, client, done) {
+    if (err) return cb(err);
+    client.query('select * from users where _id = $1', [_id], function (err, result) {
+      done();
+      if (err) return cb(err);
+      if (result.rows.length === 0) {
+        return cb(null, null);
+      }
+      cb(null, result.rows[0]);
+    });
+  });
+};
+
+exports.updateDoc = function(doc, cb) {
+  pg.connect(url, function(err, client, done) {
+    if (err) return cb(err);
+    var nextRev = (parseInt(doc._rev) + 1).toString();
+    client.query("update users set balance = $1, gems = $2, _rev = $3 where _id = $4 and _rev = $5",
+                 [doc.balance, doc.gems, nextRev, doc._id, doc._rev],
+                 function (err, result) {
+      done();
+      if (err) {
+        cb(err);
+      } else if (result.rowCount === 0) {
+        // Assume the doc is there. If it's not, I think the code still works fine.
+        cb(null, { old: true });
+      } else {
+        cb(null, { rev: nextRev });
+      }
+    });
+  });
+};
+</pre>
+
+<p>
+Install a PostgreSQL driver.
+</p>
+
+<pre>
+cd ~/405/psql
+npm install pg
+</pre>
+
+<p>
+Test that the app works.
 </p>
 
 <h2>Reading</h2>
 
 <p>
-You will need to become familiar with the SQL language and 
+To become familiar with the SQL language, read 
 <a href="http://www.postgresql.org/docs/9.3/static/index.html">the
 PostgreSQL documentation</a>.
-Don't get absorbed with learning the advanced features of SQL;
-the following are the SQL operations I believe you will need to use.
+The following are the SQL operations used in this assignment.
 </p>
 
 <ul>
@@ -69,45 +182,4 @@ the following are the SQL operations I believe you will need to use.
 <li>get a row of data using a primary key</li>
 <li>update a row in a table based on a primary key</li>
 </ul>
-
-<h2>Instructions</h2>
-
-<p>
-Install PostgreSQL and start it. 
-</p>
-
-<p>
-There are 2 ways you should interact with the database:
-</p>
-
-<ul>
-<li>From the command line client <code>psql</code>.</li>
-<li>Through <a href="https://npmjs.org/package/pg">a PostreSQL driver written for Node.js</a>.</li>
-</ul>
-
-<p>
-You should become familiar with the command line client
-because you will use it for debugging and for
-writing a database creation script.
-You should write a script 
-that creates a database called <em>gift</em>
-and populate it with the same data used to test the code
-you developed for the gift application.
-</p>
-
-<p>
-Unlike CouchDB, you'll need to use 
-<a href="https://npmjs.org/package/pg">a driver written for Node.js</a> 
-in order to interact with the PostgreSQL database.
-You should use the client pooling feature 
-of the driver rather than open and close
-a connection with each access to the database.
-</p>
-
-<p>
-To complete this assignment,
-I believe that you only need to modify 
-the database creation script and
-the <code>db</code> module defined in <em>db.js</em>.
-</p>
 
