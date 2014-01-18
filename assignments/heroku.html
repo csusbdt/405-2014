@@ -188,6 +188,14 @@ web: node heroku/server/main
 </pre>
 
 <p>
+We are going to issue the node command to start the server from
+the top level of the repository rather than from within the folder for the assignment.
+We need to do this because that's how the server will be started in the remote environment.
+For this to work, we need to adjust the path to app.html that
+appears in <em>client.js</em> so that it is relative to <em>~/405</em>.
+</p>
+
+<p>
 Add database support to your Heroku app with the following.
 </p>
 
@@ -223,7 +231,7 @@ replacing [app-name] with your Heroku app name.
 </p>
 
 <pre>
-psql -d gift -f createdb.sql
+psql -d gift -f gift.sql
 heroku pg:reset DATABASE_URL --app [app-name] --confirm [app-name]
 heroku pg:push gift DATABASE_URL --app [app-name]
 </pre>
@@ -289,6 +297,9 @@ Run the following command to deploy the application into the remote environment.
 </p>
 
 <pre>
+cd ~/405
+git add .
+git commit -m "created heroku app"
 git push heroku master
 </pre>
 
