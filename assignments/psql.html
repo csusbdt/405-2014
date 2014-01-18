@@ -22,18 +22,25 @@ called <a href="http://www.postgresql.org/">PostqreSQL</a>.
 
 <p>
 This assignment builds on the gift assignment.
+We will replace the CouchDB database in the gift assignment
+with a PostgreSQL database.
+</p>
+<h2>Setup</h2>
+
+<p>
+This assignment requires that you have access to a PostgreSQL database.
+Install PostgreSQL and start it.
+How you do this depends on your operating system and maybe other factors.
 </p>
 
 <p>
-This assignment requires more research and self-study than previous assignments.
+Under OS X ...
 </p>
 
-<p>
-Install PostgreSQL and start it. 
-</p>
+<blockquote>
 
 <p>
-Under OS X, download the Postgres.app and copy it into your Applications folder.
+Download the Postgres.app and copy it into your Applications folder.
 Add the following export to <em>~/.bash_profile</em>;
 this will let you easily launch the command line tools inside a terminal window.
 </p>
@@ -47,16 +54,52 @@ Double click the Postgres.app to start it.
 It will run in the background from that point.
 </p>
 
+</blockquote>
+
+<p>
+Under Windows ...
+</p>
+
+<blockquote>
+
 <p>
 I believe the standard installer for Windows is straight forward to use.
 Let me know if this is not the case.
 </p>
+
+</blockquote>
+
+<p>
+In JB 359 ...
+</p>
+
+<blockquote>
 
 <p>
 You might need to study the following to
 start postresql in the labs:
 http://www.postgresql.org/docs/8.1/static/postmaster-start.html
 </p>
+
+</blockquote>
+
+<h2>Study</h2>
+
+<p>
+To become familiar with the SQL language, read 
+<a href="http://www.postgresql.org/docs/9.3/static/index.html">the
+PostgreSQL documentation</a>.
+The following are the SQL operations used in this assignment.
+</p>
+
+<ul>
+<li>create a database</li>
+<li>delete a database</li>
+<li>create a table</li>
+<li>insert a new row in a table</li>
+<li>get a row of data using a primary key</li>
+<li>update a row in a table based on a primary key</li>
+</ul>
 
 <p>
 Find and do a tutorial to learn the basics
@@ -81,8 +124,10 @@ We will completely replace the contents of the scripts folder.
 For this reason, start by deleting the files in <em>~/405/psql/scripts</em>.
 </p>
 
+<h2>Database Creation Script</h2>
+
 <p>
-Inside the <em>psql</em> folder,
+Inside the <em>psql/scripts</em> folder,
 create file <em>gift.sql</em> with the following contents.
 </p>
 
@@ -112,6 +157,53 @@ psql -d gift -f gift.sql
 
 <p>
 Run <em>local.sh</em> to create the gift database with the local PostgreSQL server.
+</p>
+
+<h2>Install Database Driver</h2>
+
+<p>
+With CouchDB we could easily interact directly with the database
+because the interaction is based on HTTP protocol and JSON.
+This is not the case with PostgreSQL.
+Rather than implementing the communication protocol needed,
+we will use a Node.js library called <em>pg</em> to
+simplify the process of issuing commands to the database and
+receiving their reults.
+</p>
+
+<p>
+Install a PostgreSQL driver.
+</p>
+
+<pre>
+cd ~/405
+npm install pg
+</pre>
+
+<p>
+The above command creates a folder named <em>node_modules</em>
+in the root level of the repository.
+When we run Node.js in the psql subfolder,
+Node.js searches upward through the parent folders of the current directory
+for the presence of node_module folders.
+It will search these folders for modules that are loaded through the <code>require</code> function.
+For this reason, we can place library dependencies in <em>~/405</em>.
+Also, we do this in prepartion for the next assignment,
+where we need to have the <em>pg</em> located at this level.
+</p>
+
+<h2>Replace the Database Module</h2>
+
+<p>
+In the gift application server code we separated database interaction from
+the resource request handlers by placing all database code in a module
+named <code>db</code>.
+This organization is an example of the principle of
+<em>separation of concerns</em>.
+This gives us a big benefit at this point;
+we only need to modify a single module
+in order to replace the underlying database.
+All other code can remain unchanged.
 </p>
 
 <p>
@@ -172,34 +264,9 @@ exports.updateDoc = function(doc, cb) {
 };
 </pre>
 
-<p>
-Install a PostgreSQL driver.
-</p>
-
-<pre>
-cd ~/405/psql
-npm install pg
-</pre>
+<h2>Test</h2>
 
 <p>
-Test that the app works.
+Use a browser to test that the app works.
 </p>
-
-<h2>Reading</h2>
-
-<p>
-To become familiar with the SQL language, read 
-<a href="http://www.postgresql.org/docs/9.3/static/index.html">the
-PostgreSQL documentation</a>.
-The following are the SQL operations used in this assignment.
-</p>
-
-<ul>
-<li>create a database</li>
-<li>delete a database</li>
-<li>create a table</li>
-<li>insert a new row in a table</li>
-<li>get a row of data using a primary key</li>
-<li>update a row in a table based on a primary key</li>
-</ul>
 
