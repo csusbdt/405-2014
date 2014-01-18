@@ -16,41 +16,301 @@ using the Heroku cloud service platform.
 </p>
 
 <p>
-This assignment requires research and self-study.
-If you get to this assignment early enough,
-I can help you solve some of the problems you encounter.
+Heroku is a company that provides Web application execution environments as a cloud service.
+The type of services it provides is referred to as <em>platform as a service</em> (PaaS).
+Heroku offers a free tier account, 
+which we will use to publish our PostgreSQL-backed gift application.
 </p>
 
 <p>
-I covered deployment to Heroku
-in the prerequisite course 
-<a href="https://github.com/csusbdt/322-2013/wiki/Heroku">Web Page Programming</a>.
-If you did not take this course,
-then you will need to put extra time into learning how to deploy onto Heroku.
-Even if you did take the course,
-there are likely many additional things you need to learn in order
-to deploy a version of your gift application to it.
+Create a free Heroku account if you haven't already.
+Install the Heroku toolbelt on your local system.
 </p>
+
+<p>
+After creating an account, login to the heroku system 
+from your terminal window using the following command.
+</p>
+
+<pre>
+heroku login
+</pre>
 
 <h2>Assignment Folder</h2>
 
 <p>
-There is no special folder for this assignment.
-You will need to create a <em>Procfile</em>,
-<em>package.json</em> file, and
-<em>node_modules</em> folder
-in the root level of your repository.
-I also advise to create file <em>.slugignore</em>
-to omit unnecessary files from the Heroku application slug.
+Create folder <em>~/405/heroku</em> for this assignment.
+Copy the client, srver and scripts folders from the psql assignment
+into the new heroku folder.
 </p>
 
 <p>
-To complete this assignment,
-you need a way for your code to distinguish
-between local and remote deployments.
-I recommend that you set environmental variables
-to accomplish this.
-You will need to use Node.js's process object to do this,
+Deployment to Heroku is done by pushing a local Git repository
+to a remote Git repository.
+This deployment process requires that certain files be present in 
+the root folder of the repository.
+For this reason, you will need to create some files in the root folder
+in addition to creating and editoing files in the heroku folder.
+</p>
+
+<p>
+Create a Heroku app.
+Decide on an app name,
+which must be unique within the Heroku system,
+and run the following command with it,
+replacing [app-name] with the app name you choose.
+Try different names until you find one that has not been taken.
+</p>
+
+<pre>
+heroku apps:create [app-name]
+</pre>
+
+<p>
+Create file <em>~/405/package.json</em> with the following contents.
+</p>
+
+<pre>
+{
+  "name": "[app name]",
+  "version": "1.0.0",
+  "description": "An app to gift gems",
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/isaacs/npm.git"
+  },
+  "dependencies": {
+    "pg": "2.11.0"
+  },
+  "engines": {
+     "node": "0.10.15",
+     "npm": "1.3.5"
+  }
+}
+</pre>
+
+<p>
+Replace <em>[app name]</em> above with a name that is unique amoung Heroku apps.
+The version numbers given above can also be adjusted as needed,
+but at the time of this writing they work.
+</p>
+
+<p>
+Heroku produces a deployable unit called a <em>slug</em> from the files you push.
+Because you have files that are not needed to produce this slug,
+you should omit them by adding patterns that match their names 
+to a file named <em>.slugignore</em>.
+Create file <em>~/405/.slugignore</em> with the following contents.
+</p>
+
+<pre>
+/ajax
+/assert
+/buf
+/cache
+/cb
+/couch
+/curl
+/events
+/file
+/gems
+/git
+/hello
+/json
+/mobile
+/old
+/read
+/scope
+/psql
+/heroku/scripts
+</pre>
+
+<p>
+Use <em>npm</em> to install the Node.js packages specified in <em>package.json</em>.
+</p>
+
+<pre>
+cd ~/405
+npm install 
+</pre>
+
+<p>
+In this assignment,
+we will run and test the application in both a local development environment
+and a remote production environment.
+For this reason, we need add code to distinguish between these 2 environments.
+We will use Node.js's process object to do this,
 which was covered in <a href="scope.html">the scope assignment</a>.
+</p>
+
+<p>
+Add the following lines to <em>main.js</em> to get the port number
+from the environment.
+</p>
+
+<pre>
+var port = process.env.PORT;
+if (port === undefined) port = 5000;
+</pre>
+
+<p>
+The above code gets the port number from Heroku's environment.
+This is the port number the server needs to listen to in the remote environment.
+When you run in the local environment,
+you should listen to a port you control,
+which in our case is port 5000.
+</p>
+
+<p>
+Modify the line in main.js that calls the listen function on the server object
+so that you listen to the port specified by the port variable.
+</p>
+
+<p>
+Another area of the code that needs to be modified to adjust to the environment
+is <em>db.js</em>.
+In this module, we need to get the database URL from the environment when
+running in the remote environment.
+Use the following 2 lines to do this.
+</p>
+
+<pre>
+var url = process.env.DATABASE_URL;
+if (url === undefined) url = 'postgres://localhost/gift';
+</pre>
+
+<p>
+Create file <em>~/405/Procfile</em> with the following contents.
+</p>
+
+<pre>
+web: node heroku/server/main
+</pre>
+
+<p>
+Add database support to your Heroku app with the following.
+</p>
+
+<pre>
+heroku addons:add heroku-postgresql --app [app-name]
+</pre>
+
+<p>
+Make note of the name of the database that gets created with the above command.
+In my case, the name was HEROKU_POSTGRESQL_YELLOW_URL.
+</p>
+
+<p>
+Promote the database with the following,
+replacing [db-name] with the name you noted from the previous command.
+</p>
+
+<pre>
+heroku pg:promote [db-name] --app [app-name]
+</pre>
+
+<p>
+The promote command results in Heroku environmental variable DATABASE_URL
+being set to [db-name].
+These environmental variables are set to the database connection string
+you need to use in your application to connect to the database.
+</p>
+
+<p>
+Create file <em>~/405/heroku/scripts/remote.sh</em>
+with the following contents,
+replacing [app-name] with your Heroku app name.
+</p>
+
+<pre>
+psql -d gift -f createdb.sql
+heroku pg:reset DATABASE_URL --app [app-name] --confirm [app-name]
+heroku pg:push gift DATABASE_URL --app [app-name]
+</pre>
+
+<p>
+This script has three commands that does the following three things.
+</p>
+
+<ul>
+<li>Recreate a local test database using createdb.sql.</li>
+<li>Clear the remote database.</li>
+<li>Copy the local database to the remote database.</li>
+</ul>
+
+<p>
+Obviously, this script is only used for testing the remote environment
+and can not be used for a production environment,
+otherwise you would lose your database.
+</p>
+
+<p>
+First test a local deployment.
+Start by running <em>local.sh</em> to create the local database.
+</p>
+
+<p>
+Use the <code>foreman</code> command from the Heroku toolbelt
+to simulate a launch of the application in the production environment.
+</p>
+
+<pre>
+cd ~/405
+foreman start
+</pre>
+
+<p>
+Launching the foreman command to test locally is optional.
+If the foreman command fails for you,
+try starting the server with the following.
+</p>
+
+<pre>
+cd ~/405
+node heroku/server/main
+</pre>
+
+<p>
+Browse to http://localhost:5000/ and test that the application runs correctly.
+</p>
+
+<p>
+After verifying the app runs in the local environment,
+test the app in the remote environment.
+Start by running the script to initialize the remote database to a known state.
+</p>
+
+<pre>
+~/405/heroku/scripts/remote.sh
+<pre>
+
+<p>
+Run the following command to deploy the application into the remote environment.
+</p>
+
+<pre>
+git push heroku master
+</pre>
+
+<p>
+If there are error messages, then debug.
+If there are no error messages, 
+then start to view the log file with the following command.
+</p>
+
+<pre>
+heroku logs --app [app-name] --tail
+</pre>
+
+<p>
+Test the app with your browser at the following url.
+</p>
+
+<pre>
+http://[app-name].herokuapp.com/
+</pre>
+
+<p>
+Check the logging output for error messages as you test the app.
 </p>
 
