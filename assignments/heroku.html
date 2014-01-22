@@ -231,7 +231,7 @@ replacing [app-name] with your Heroku app name.
 </p>
 
 <pre>
-psql -d gift -f gift.sql
+psql -h localhost -d gift -f gift.sql
 heroku pg:reset DATABASE_URL --app [app-name] --confirm [app-name]
 heroku pg:push gift DATABASE_URL --app [app-name]
 </pre>
