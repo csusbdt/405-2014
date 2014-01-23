@@ -135,14 +135,26 @@ console.log(process.env.x);
 Now run the code with the environmental variable <code>x</code> set to "Hello there.".
 </p>
 
+<p>
+Under OS X and Linux ...
+</p>
+
+<blockquote>
 <pre>
 x="Hello there." node process
 </pre>
+</blockquote>
 
-<p class="callout">
-I'm not sure the above works on Windows.
-Please let me know and I will add that here.
+<p>
+Under Windows ...
 </p>
+
+<blockquote>
+<pre>
+set x="Hello there."
+node process
+</pre>
+</blockquote>
 
 <p class="callout">
 The ability to access environmental variables
