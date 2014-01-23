@@ -151,8 +151,7 @@ Under Windows ...
 
 <blockquote>
 <pre>
-set x="Hello there."
-node process
+set x="Hello there." & node process
 </pre>
 </blockquote>
 
@@ -173,11 +172,16 @@ using the system's line continuation character.
 As an example, suppose we wanted to run process.js 
 with values set for variables 
 <code>x</code>, <code>y</code>, <code>z</code>.
-Under OS X and Windows, create a file named <em>run.sh</em>
-with the following contents.
 </p>
 
-<div class="csusbdt-code-title">run.sh</div>
+<p>
+Under OS X and Linux ...
+</p>
+
+<blockquote>
+<p>Create a file named <em>run.sh</em>
+with the following contents.
+</p>
 
 <pre>
 x="Do you like my hat?"   \
@@ -187,24 +191,37 @@ node process
 </pre>
 
 <p>
-To run the script under OS X and Linux, 
-you need to make the shell script executable.
+Make the shell script executable.
 </p>
 
 <pre>
 chmod +x run.sh
 </pre>
+</blockquote>
+
+<p>
+Under Windows ...
+</p>
+
+<blockquote>
+
+<p>Create a file named <em>run.bat</em>
+with the following contents.
+</p>
+
+<pre>
+set x="Do you like my hat?"   ^
+set y="No I don't."           ^
+set z=42                      ^
+node process
+</pre>
+
+</blockquote>
 
 <p>
 Modify process.js to display
 <code>x</code>, <code>y</code>, and <code>z</code>.
-Use the run script to test.
-</p>
-
-<p class="csusbdt-callout">
-Under Windows, you need to name the file <em>run.bat</em>
-and use <code>^</code> for the line continuation character.
-<span class="text-warning">Let me know any other details I am missing for this.</span>
+Execute your run script to test.
 </p>
 
 <h2>Module scope</h2>
