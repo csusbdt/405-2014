@@ -4,7 +4,7 @@ title: Heroku Assignment
 ---
 
 <div class="csusbdt-video-btn">
-  <a class="btn btn-default" role="button" href="#">No Video</a>
+  <a class="btn btn-success" role="button" target="_blank" href="http://youtu.be/r5NmP3hCoWs">Video</a>
 </div>
 
 <h2>Overview</h2>
@@ -40,7 +40,7 @@ heroku login
 
 <p>
 Create folder <em>~/405/heroku</em> for this assignment.
-Copy the client, srver and scripts folders from the psql assignment
+Copy the client, server and scripts folders from the psql assignment
 into the new heroku folder.
 </p>
 
@@ -64,6 +64,27 @@ Try different names until you find one that has not been taken.
 
 <pre>
 heroku apps:create [app-name]
+</pre>
+
+<p>
+The above command might create a new remote reference named <em>heroku</em>
+that points to the remote repository used for deployment.
+Check that with the following git command.
+</p>
+
+<pre>
+git remote
+</pre>
+
+<p>
+If you do not see <em>heroku</em> along with <em>master</em>
+in the resulting list, 
+then use the following to create the remote reference,
+replacing <em>[app-name]</em> with your chosen app name.
+</p>
+
+<pre>
+git remote add git@heroku.com:[app-name].git
 </pre>
 
 <p>
@@ -260,6 +281,7 @@ Start by running <em>local.sh</em> to create the local database.
 <p>
 Use the <code>foreman</code> command from the Heroku toolbelt
 to simulate a launch of the application in the production environment.
+Try the following, which will fail in some environments.
 </p>
 
 <pre>
@@ -268,9 +290,12 @@ foreman start
 </pre>
 
 <p>
-Launching the foreman command to test locally is optional.
+Using the foreman command is better for testing how the app will be launched
+in the remote environment,
+but in the past I have observed the foreman command to be problematic in some
+development environments.
 If the foreman command fails for you,
-try starting the server with the following.
+then try starting the server with the following.
 </p>
 
 <pre>
@@ -279,7 +304,8 @@ node heroku/server/main
 </pre>
 
 <p>
-Browse to http://localhost:5000/ and test that the application runs correctly.
+In either caes, 
+browse to http://localhost:5000/ and test that the application runs correctly.
 </p>
 
 <p>
