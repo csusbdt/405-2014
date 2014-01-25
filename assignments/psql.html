@@ -244,8 +244,8 @@ exports.updateDoc = function(doc, cb) {
   pg.connect(url, function(err, client, done) {
     if (err) return cb(err);
     var nextRev = (parseInt(doc._rev) + 1).toString();
-    client.query("update users set balance = $1, gems = $2, _rev = $3 where _id = $4 and _rev = $5",
-                 [doc.balance, doc.gems, nextRev, doc._id, doc._rev],
+    client.query("update users set balance = $1, gems = $2, score = $3, _rev = $4 where _id = $5 and _rev = $6",
+                 [doc.balance, doc.gems, doc.score, nextRev, doc._id, doc._rev],
                  function (err, result) {
       done();
       if (err) {
