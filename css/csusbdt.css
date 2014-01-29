@@ -7,6 +7,15 @@ em {
   color: #468847;
 }
 
+pre {
+  font-size: .8em;
+}
+
+blockquote, blockquote p {
+  font-size: 1em;
+  font-weight: normal;
+}
+
 table {
   background-color: #f5f5f5;
 }
