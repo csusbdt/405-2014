@@ -63,17 +63,17 @@ Under Windows ...
 <blockquote>
 
 <p>
-I believe the standard installer for Windows is the easiest approach.
+Use the standard installer for Windows.
 During installation and setup, select defaults when available.
 Leave the username as <em>postgres</em> but you will need to pick a password.
-The password is not critical unless you plan to open up your database to the outside,
+The password is not critical, unless you plan to open up your database to the outside,
 so set something easy to remember.
 Do not run StackBuilder; exit when you reach this point.
 </p>
 
 <p>
 To run the PostgreSQL server, run the following from the command line.
-Adjust the path to match your system.
+Adjust the path to match the location of <em>runpsql.bat</em> in your system.
 </p>
 
 <pre>
@@ -86,7 +86,7 @@ to run PostgreSQL commands at the command line.
 </p>
 
 <pre>
-"C:\Program Files\PostgreSQL\9.3\scripts\runpsql.bat"
+"C:\Program Files\PostgreSQL\9.3\pg_env.bat"
 </pre>
 
 </blockquote>
