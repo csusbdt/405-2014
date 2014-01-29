@@ -30,6 +30,8 @@ Install the Heroku toolbelt on your local system.
 <p>
 After creating an account, login to the heroku system 
 from your terminal window using the following command.
+You will only need to login once because Heroku will cache your SSH public key
+to authenticate future connections automatically.
 </p>
 
 <pre>
@@ -249,6 +251,7 @@ you need to use in your application to connect to the database.
 Create file <em>~/405/heroku/scripts/remote.sh</em>
 with the following contents,
 replacing [app-name] with your Heroku app name.
+(Name the file <em>remote.bat</em> if you are on Windows.)
 </p>
 
 <pre>

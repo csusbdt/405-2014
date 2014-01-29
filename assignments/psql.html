@@ -63,9 +63,31 @@ Under Windows ...
 <blockquote>
 
 <p>
-I believe the standard installer for Windows is straight forward to use.
-Let me know if this is not the case.
+I believe the standard installer for Windows is the easiest approach.
+During installation and setup, select defaults when available.
+Leave the username as <em>postgres</em> but you will need to pick a password.
+The password is not critical unless you plan to open up your database to the outside,
+so set something easy to remember.
+Do not run StackBuilder; exit when you reach this point.
 </p>
+
+<p>
+To run the PostgreSQL server, run the following from the command line.
+Adjust the path to match your system.
+</p>
+
+<pre>
+"C:\Program Files\PostgreSQL\9.3\scripts\runpsql.bat"
+</pre>
+
+<p>
+Run the following script in terminal window to set up the environmental variables
+to run PostgreSQL commands at the command line.
+</p>
+
+<pre>
+"C:\Program Files\PostgreSQL\9.3\scripts\runpsql.bat"
+</pre>
 
 </blockquote>
 
@@ -82,6 +104,15 @@ http://www.postgresql.org/docs/8.1/static/postmaster-start.html
 </p>
 
 </blockquote>
+
+<p>
+After starting the server, run the following in a terminal window to 
+create a database named <em>gift</em>.
+</p>
+
+<pre>
+createdb gift
+</pre>
 
 <h2>Study</h2>
 
@@ -129,6 +160,7 @@ For this reason, start by deleting the files in <em>~/405/psql/scripts</em>.
 <p>
 Inside the <em>psql/scripts</em> folder,
 create file <em>gift.sql</em> with the following contents.
+This script creates a table named <em>users</em> and inserts two rows into the table.
 </p>
 
 <pre>
@@ -149,6 +181,7 @@ INSERT INTO users VALUES ('b', '0', 'b', 0, 0, 0);
 
 <p>
 Create <em>local.sh</em> with the following contents.
+(Name the file <em>local.bat</em> if you are on Windows.)
 </p>
 
 <pre>
