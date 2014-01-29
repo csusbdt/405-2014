@@ -243,8 +243,17 @@ All other code can remain unchanged.
 Replace <em>db.js</em> with the following.
 </p>
 
+<blockquote>
+
+<p>
+On Windows, replace <code>'postgres://postgres@localhost/gift'</code>
+with <code>'postgres://localhost/gift'</code> in the following.
+</p>
+
+</blockquote>
+
 <pre>
-var pg          = require('pg');
+var pg = require('pg');
 
 var url = 'postgres://localhost/gift';
 
