@@ -246,8 +246,8 @@ Replace <em>db.js</em> with the following.
 <blockquote>
 
 <p>
-On Windows, replace <code>'postgres://postgres@localhost/gift'</code>
-with <code>'postgres://localhost/gift'</code> in the following.
+On Windows, replace <code>'postgres://localhost/gift'</code>
+with <code>'postgres://postgres@localhost/gift'</code> in the following.
 </p>
 
 </blockquote>
@@ -255,7 +255,7 @@ with <code>'postgres://localhost/gift'</code> in the following.
 <pre>
 var pg = require('pg');
 
-var url = 'postgres://localhost/gift';
+var url = 'postgres://localhost/gift'; // or 'postgres://postgres@localhost/gift'
 
 exports.init = function(cb) {
   pg.connect(url, function(err, client, done) {
