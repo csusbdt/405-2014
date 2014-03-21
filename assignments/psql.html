@@ -97,11 +97,32 @@ In JB 359 ...
 
 <blockquote>
 
-<p>
-You might need to study the following to
-start postresql in the labs:
-http://www.postgresql.org/docs/8.1/static/postmaster-start.html
-</p>
+<pre>
+# Download source distribution of postgresql.
+cd
+git clone https://github.com/postgres/postgres.git postgres-src
+
+# Build and install postgresql.
+cd postgres-src
+./configure --prefix=$HOME/postgres/
+make
+make install
+
+# Create the server's data folder.
+~/postgres/bin/initdb -D ~/postgres/data/
+
+# Create the gift database.
+~/postgres/bin/createdb gift
+
+# Start the postgres server.
+~/postgres/bin/postgres -D ~/postgres/data/
+
+# Run the command line client .
+~/postgres/bin/psql -h localhost -d gift
+
+# Shutdown the postres server.
+~/postgres/bin/pg_ctl  -D ~/postgres/data/ stop 
+</pre>
 
 </blockquote>
 
